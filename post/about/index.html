@@ -69,13 +69,39 @@
 
 
 
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '',
+    clientSecret: '',
+    repo: '',
+    owner: '',
+    admin: [''],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
                       </section>
     </main>
 </div>
 	<footer class="site-footer u-textAlignCenter">
     	<div class="footer-branding">
             <a href="https://rhizophora.github.io/" title="Hello啊，树哥">Hello啊，树哥</a>
-									
+									<p class="site-description">好好赚钱玩游戏</p>
 			         </div>
 		 <hr />
 		 <div class="social-links">
@@ -84,7 +110,9 @@
                            
                             
                            
-                            
+                            	
+			<span class="social-link"><a href="https://github.com/Rhizophora" target="_blank"><i class="iconfont icon-github"></i></a></span>	
+			                         
                            
                             
                            
