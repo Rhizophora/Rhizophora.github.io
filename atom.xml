@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://rhizophora.github.io/</id>
     <title>Hello啊，树哥</title>
-    <updated>2020-04-17T03:09:55.617Z</updated>
+    <updated>2020-04-28T12:26:59.904Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://rhizophora.github.io/"/>
     <link rel="self" href="https://rhizophora.github.io/atom.xml"/>
@@ -10,6 +10,82 @@
     <logo>https://rhizophora.github.io/images/avatar.png</logo>
     <icon>https://rhizophora.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Hello啊，树哥</rights>
+    <entry>
+        <title type="html"><![CDATA[Kotlin学习笔记3]]></title>
+        <id>https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-3/</id>
+        <link href="https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-3/">
+        </link>
+        <updated>2020-04-28T12:26:15.000Z</updated>
+        <content type="html"><![CDATA[<p>次构造器：</p>
+<pre><code class="language-kotlin">class User {
+    var name: String
+    constructor(name: String) {
+        this.name = name
+    }
+}
+</code></pre>
+<p>主构造器：</p>
+<pre><code class="language-kotlin">class User constructor(name: String) {
+    //                  👇 这里与构造器中的 name 是同一个
+    var name: String = name
+}
+</code></pre>
+<p>在kotlin中一个类最多只能有一个主构造器，也可以没有，次级构造器没有个数限制</p>
+<p>主构造器中的参数除了可以在类的属性中使用，还可以在init代码块中使用：</p>
+<pre><code class="language-kotlin">class User constructor(name: String) {
+    var name: String
+    init {
+        this.name = name
+    }
+}
+</code></pre>
+<p>其中init代码块是紧跟在主构造器之后执行的，这是因为主构造器本身没有代码体。</p>
+<p>另外，如果类中有主构造器，那么其他次级构造器都需要通过this关键字调用主构造器。不然就会编译报错。因为创建类的对象时，不管使用哪个构造器，都需要主构造器的参与；在类的初始化过程中，首先执行的就是主构造器。</p>
+<pre><code class="language-kotlin">class User constructor(var name: String) {
+                                   // 👇  👇 直接调用主构造器
+    constructor(name: String, id: Int) : this(name) {
+    }
+                                                // 👇 通过上一个次构造器，间接调用主构造器
+    constructor(name: String, id: Int, age: Int) : this(name, id) {
+    }
+}
+</code></pre>
+<p>通常情况下，主构造器中的constructor关键字可以省略：</p>
+<pre><code class="language-kotlin">class User(name: String) {
+    var name: String = name
+}
+</code></pre>
+<p>但有些场景，constructor是不可以省略的，例如在主构造器上使用可见性修饰符或者注解</p>
+<pre><code class="language-kotlin">class User private constructor(name: String) {
+//           👆 主构造器被修饰为私有的，外部就无法调用该构造器
+}
+</code></pre>
+<p>其实还可以在主构造器中直接声明属性：</p>
+<pre><code class="language-kotlin">class User(var name: String) {
+}
+// 等价于：
+class User(name: String) {
+  var name: String = name
+}
+</code></pre>
+<p>：可以理解为依赖</p>
+<p>函数简化：</p>
+<p>使用=连接返回值</p>
+<pre><code class="language-kotlin">fun area(width: Int, height: Int): Int {
+    return width * height
+}
+</code></pre>
+<p>这种只有一行的代码，可以这样写</p>
+<pre><code class="language-kotlin">fun area(width: Int, height: Int): Int = width * height
+</code></pre>
+<p>因为kotlin有类型推断，所以还可以更简洁</p>
+<pre><code class="language-kotlin">fun area(width: Int, height: Int) = width * height
+</code></pre>
+<p>对于没有返回值的，可以理解为返回值是Unit:</p>
+<pre><code class="language-kotlin">fun sayHi(name: String) = println(&quot;Hi &quot; + name)
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Hello Word]]></title>
         <id>https://rhizophora.github.io/post/hello-word/</id>

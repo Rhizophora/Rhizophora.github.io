@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="initial-scale=1.0,user-scalable=no,minimal-ui" />
+    <title>Kotlin学习笔记3 | Hello啊，树哥</title>
+<link rel='stylesheet' id='puma-css'  href='https://rhizophora.github.io//styles/main.css' type='text/css' media='screen' />
+<link rel='stylesheet' id='puma-css'  href='https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css' media='screen' />
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<script type='text/javascript' src='https://rhizophora.github.io//media/scripts/jquery.js'></script>
+<script type='text/javascript' src='https://rhizophora.github.io//media/scripts/jquery-migrate.min.js'></script>
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+         <script >hljs.initHighlightingOnLoad();</script>
+         
+</head>
+<body class="single single-post postid-3788 single-format-standard">
+	<!--加入跟随滑动的顶部-->
+	<header id="masthead" class="site-header" role="banner">
+		<div class="site-branding">
+			<h1 class="site-title">
+				<a href="https://rhizophora.github.io/" title="Hello啊，树哥">Hello啊，树哥</a>
+			</h1>
+		</div>
+
+		<a class="primary-nav-trigger" href="javascript:void(0)">
+			<span class="menu-icon"></span>
+		</a>
+		
+	</header>
+		<div class="site-navigation-wrapper">
+		<nav id="site-navigation" class="main-navigation" role="navigation">
+			<ul class="primary-nav">
+                    
+				<li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30"><a title="首页" href="/">首页</a></li>
+                
+				<li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30"><a title="归档" href="/archives">归档</a></li>
+                
+				<li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30"><a title="标签" href="/tags">标签</a></li>
+                
+				<li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30"><a title="关于" href="/post/about">关于</a></li>
+                
+	
+			</ul>
+		</nav>			
+	</div>
+	<!--跟随滑动的顶部结束-->
+	<div class="surface-content">    <main class="main-content">
+        <section class="section-body">
+                            <header class="section-header u-textAlignCenter">
+                    <h2 class="grap--h2">Kotlin学习笔记3</h2>
+                    <div class="block-postMetaWrap">
+                        <time>2020-04-28</time>
+                    </div>
+                </header>
+                <div class="grap">
+					
+					<p>次构造器：</p>
+<pre><code class="language-kotlin">class User {
+    var name: String
+    constructor(name: String) {
+        this.name = name
+    }
+}
+</code></pre>
+<p>主构造器：</p>
+<pre><code class="language-kotlin">class User constructor(name: String) {
+    //                  👇 这里与构造器中的 name 是同一个
+    var name: String = name
+}
+</code></pre>
+<p>在kotlin中一个类最多只能有一个主构造器，也可以没有，次级构造器没有个数限制</p>
+<p>主构造器中的参数除了可以在类的属性中使用，还可以在init代码块中使用：</p>
+<pre><code class="language-kotlin">class User constructor(name: String) {
+    var name: String
+    init {
+        this.name = name
+    }
+}
+</code></pre>
+<p>其中init代码块是紧跟在主构造器之后执行的，这是因为主构造器本身没有代码体。</p>
+<p>另外，如果类中有主构造器，那么其他次级构造器都需要通过this关键字调用主构造器。不然就会编译报错。因为创建类的对象时，不管使用哪个构造器，都需要主构造器的参与；在类的初始化过程中，首先执行的就是主构造器。</p>
+<pre><code class="language-kotlin">class User constructor(var name: String) {
+                                   // 👇  👇 直接调用主构造器
+    constructor(name: String, id: Int) : this(name) {
+    }
+                                                // 👇 通过上一个次构造器，间接调用主构造器
+    constructor(name: String, id: Int, age: Int) : this(name, id) {
+    }
+}
+</code></pre>
+<p>通常情况下，主构造器中的constructor关键字可以省略：</p>
+<pre><code class="language-kotlin">class User(name: String) {
+    var name: String = name
+}
+</code></pre>
+<p>但有些场景，constructor是不可以省略的，例如在主构造器上使用可见性修饰符或者注解</p>
+<pre><code class="language-kotlin">class User private constructor(name: String) {
+//           👆 主构造器被修饰为私有的，外部就无法调用该构造器
+}
+</code></pre>
+<p>其实还可以在主构造器中直接声明属性：</p>
+<pre><code class="language-kotlin">class User(var name: String) {
+}
+// 等价于：
+class User(name: String) {
+  var name: String = name
+}
+</code></pre>
+<p>：可以理解为依赖</p>
+<p>函数简化：</p>
+<p>使用=连接返回值</p>
+<pre><code class="language-kotlin">fun area(width: Int, height: Int): Int {
+    return width * height
+}
+</code></pre>
+<p>这种只有一行的代码，可以这样写</p>
+<pre><code class="language-kotlin">fun area(width: Int, height: Int): Int = width * height
+</code></pre>
+<p>因为kotlin有类型推断，所以还可以更简洁</p>
+<pre><code class="language-kotlin">fun area(width: Int, height: Int) = width * height
+</code></pre>
+<p>对于没有返回值的，可以理解为返回值是Unit:</p>
+<pre><code class="language-kotlin">fun sayHi(name: String) = println(&quot;Hi &quot; + name)
+</code></pre>
+
+                </div>
+
+                <div class="post--keywords" itemprop="keywords">
+					          </div>
+
+
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '1e614d16da5fc018bcbc',
+    clientSecret: 'd5e5bf76bb8430a9ec5454feb2c5da70d63db4c8',
+    repo: 'Rhizophora.github.io',
+    owner: 'Rhizophora',
+    admin: ['Rhizophora'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+                      </section>
+    </main>
+</div>
+	<footer class="site-footer u-textAlignCenter">
+    	<div class="footer-branding">
+            <a href="https://rhizophora.github.io/" title="Hello啊，树哥">Hello啊，树哥</a>
+									<p class="site-description">好好赚钱玩游戏</p>
+			         </div>
+		 <hr />
+		 <div class="social-links">
+		                       
+                            
+                           
+                            
+                           
+                            	
+			<span class="social-link"><a href="https://github.com/Rhizophora" target="_blank"><i class="iconfont icon-github"></i></a></span>	
+			                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+				</div>
+        <div class="footer-copy">
+                Powered by <a href="https://github.com/Rhizophora/Rhizophora.github.io" target="_blank">Rhizophora</a>
+        </div>
+
+    </footer>
+	<div class="back-to-top u-hide" onclick="backToTop();"><i class="iconfont icon-xiangshang"></i></div>
+
+<script type='text/javascript' src='https://rhizophora.github.io//media/scripts/main.js'></script>
+</body>
+</html>
