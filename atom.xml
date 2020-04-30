@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://rhizophora.github.io/</id>
     <title>Hello啊，树哥</title>
-    <updated>2020-04-30T08:36:52.802Z</updated>
+    <updated>2020-04-30T08:38:56.045Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://rhizophora.github.io/"/>
     <link rel="self" href="https://rhizophora.github.io/atom.xml"/>
@@ -11,343 +11,11 @@
     <icon>https://rhizophora.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Hello啊，树哥</rights>
     <entry>
-        <title type="html"><![CDATA[Kotlin学习笔记二-关于类和Java的不同]]></title>
-        <id>https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-er-guan-yu-lei-he-java-de-bu-tong/</id>
-        <link href="https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-er-guan-yu-lei-he-java-de-bu-tong/">
-        </link>
-        <updated>2020-04-30T08:32:38.000Z</updated>
-        <content type="html"><![CDATA[<p>kotlin构造器的写法和java不一样：</p>
-<p>java:</p>
-<pre><code class="language-java">public class User {
-    int id;
-    String name;
-      👇   👇
-    public User(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-}
-</code></pre>
-<p>kotlin:</p>
-<pre><code class="language-kotlin">class User {
-    val id: Int
-    val name: String
-         👇
-    constructor(id: Int, name: String) {
- //👆 没有 public
-        this.id = id
-        this.name = name
-    }
-}
-</code></pre>
-<p>两点不同：java中构造器和类同名，Kotlin中则使用constructor表示；Kotlin中构造器没有public修饰，因为默认是public。</p>
-<p>kotlin初始化代码块的写法和java不一样：</p>
-<p>java:</p>
-<pre><code class="language-java">public class User {
-   👇
-    {
-        // 初始化代码块，先于下面的构造器执行
-    }
-    public User() {
-    }
-}
-</code></pre>
-<p>kotlin:</p>
-<pre><code class="language-kotlin">class User {
-    👇
-    init {
-        // 初始化代码块，先于下面的构造器执行
-    }
-    constructor() {
-    }
-}
-</code></pre>
-<p>关于final:</p>
-<p>kotlin中val和java的final类似，表示只读变量，不能修改。不同之处在于，kotlin函数参数默认是val类型，所以参数前不需要写val关键字，这样设计是为了保证参数不会被修改；而java的参数可修改，会增加出错的概率。</p>
-<p>虽然val修饰的变量不能二次赋值，但是可以通过自定义变量的getter函数，让变量每次被访问时，返回动态获取的值。</p>
-<p>eg:</p>
-<pre><code class="language-kotlin">val size: Int
-    get() { // 👈 每次获取 size 值时都会执行 items.size
-        return items.size
-    }
-</code></pre>
-<p>静态常量和静态方法：</p>
-<p>java里写常量都是用static+final。但是在kotlin里，静态变量和静态方法这两个概念被去除了。</p>
-<p>如果想在kotlin里像java一样直接通过类引用，就要用到companion object。</p>
-<pre><code class="language-kotlin">class Sample {
-    ...
-       👇
-    companion object {
-        val anotherString = &quot;Another String&quot;
-    }
-}
-</code></pre>
-<p>Sample.anotherString.length</p>
-<p>kotlin里的object，首字母小写。java中的Object在kotlin里不用了。java中的Object在Kotlin里变成了Any,和Object作用一样：所有类的基类。</p>
-<p>但是 kotlin中的object不是对象，而是关键字，可以理解为单例。</p>
-<pre><code class="language-kotlin">object Sample {
-    val name = &quot;A name&quot;
-}
-</code></pre>
-<p>Sample.name</p>
-<p>object的意思很简单：创建一个类，并且创建一个这个类的对象。在代码中如果要使用这个对象，直接使用它的类名就可以访问。</p>
-<p>所以在kotlin中创建单例很简单，class换成object就行了。</p>
-<p>这种通过object实现的单例是一个饿汉式的单例，并且实现了线程安全。</p>
-<p>object也可以继承别的类，实现接口。</p>
-<p>为什么 object 可以实现接口呢？简单来讲 object 其实是把两步合并成了一步，既有 class 关键字的功能，又实现了单例，这样就容易理解了。</p>
-<p>匿名类：</p>
-<p>java:</p>
-<pre><code class="language-java">ViewPager.SimpleOnPageChangeListener listener = new ViewPager.SimpleOnPageChangeListener() {
-    @Override // 👈
-    public void onPageSelected(int position) {
-        // override
-    }
-};
-</code></pre>
-<p>kotlin:</p>
-<pre><code class="language-kotlin">val listener = object: ViewPager.SimpleOnPageChangeListener() {
-    override fun onPageSelected(position: Int) {
-        // override
-    }
-}  
-</code></pre>
-<p>和java创建匿名类的方式很相似，只不过把new换成了object:</p>
-<p>object:修饰的都是接口或者抽象类。</p>
-<p>companion object :</p>
-<p>object修饰的对象中的变量和函数都是静态的。所以如果想让类中的一部分函数和变量成为静态就要用到companion object(伴生对象)。</p>
-<pre><code class="language-kotlin">class A {
-          👇
-    object B {
-        var c: Int = 0
-    }
-}
-</code></pre>
-<p>A.B.c</p>
-<p>也可以这样写</p>
-<pre><code class="language-kotlin">class A {
-       👇
-    companion object B {
-        var c: Int = 0
-    }
-}
-</code></pre>
-<p>companion可以理解为伴随、伴生，表示修饰的对象和外部类绑定。</p>
-<p>但是有一个小限制：一个类中最多只能有一个伴生对象，但可以有多个嵌套对象。</p>
-<p>也因为这个限制，所以调用的时候可以省掉对象名：A.c</p>
-<p>所以有companion修饰时，对象的名字也可省略掉：</p>
-<pre><code class="language-kotlin">class A {
-                // 👇 B 没了
-    companion object {
-        var c: Int = 0
-    }
-}
-</code></pre>
-<p>静态初始化：</p>
-<p>java中的静态变量和方法,kotlin都放在了companion object中。因此java中的静态初始化在kotlin中自然也是放在companion object中。</p>
-<pre><code class="language-kotlin">class Sample {
-       👇
-    companion object {
-         👇
-        init {
-            ...
-        }
-    }
-}
-</code></pre>
-<p>顶层声明（top-level property/function）:</p>
-<p>就是把属性和函数的声明不写在class里面，这个在kotlin里是允许的：</p>
-<pre><code class="language-kotlin">package com.hencoder.plus
-
-// 👇 属于 package，不在 class/object 内
-fun topLevelFuncion() {
-}
-</code></pre>
-<p>topLevelFunction()</p>
-<p>这样写的属性和函数，不属于任何class,而是直接属于package，它和静态变量、函数一样是全局的，直接用，都不需要写类名。</p>
-<p>所以对于object、companion object 、top-level：</p>
-<p>如果想写工具类的功能，直接创建文件，写top-level顶层函数。</p>
-<p>如果要继承别的类或者实现接口，就用object或者companion object。</p>
-<p>常量：</p>
-<p>java:</p>
-<pre><code class="language-java">public class Sample {
-            👇     👇
-    public static final int CONST_NUMBER = 1;
-}
-</code></pre>
-<p>kotlin:</p>
-<pre><code class="language-kotlin">class Sample {
-    companion object {
-         👇                  // 👇
-        const val CONST_NUMBER = 1
-    }
-}
-
-const val CONST_SECOND_NUMBER = 2
-</code></pre>
-<p>kotlin用const 修饰常量；kotlin的常量必须声明在对象（包括伴生对象）或者顶层中，因为常量是静态的。</p>
-<p>而且kotlin中只有基本类型和String类型可以声明成常量，而java里 static  final还可以修饰对象。但是java中可以是伪常量。</p>
-<pre><code class="language-java">public class User {
-    int id; // 👈 可修改
-    String name; // 👈 可修改
-    public User(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-}
-</code></pre>
-<pre><code class="language-java">static final User user = new User(123, &quot;Zhangsan&quot;);
-</code></pre>
-<pre><code class="language-java">user.name = &quot;Lisi&quot;;
-</code></pre>
-<p>可以通过上面的方式改变它内部的值。而kotlin的常量因为限制类型必须是基本类型，所以不存在这种问题，更符合常量的定义。</p>
-<p>数组</p>
-<p>声明一个string数组：</p>
-<p>java:</p>
-<pre><code class="language-java">String[] strs = {&quot;a&quot;, &quot;b&quot;, &quot;c&quot;};
-</code></pre>
-<p>kotlin:</p>
-<pre><code class="language-kotlin">val strs: Array&lt;String&gt; = arrayOf(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
-</code></pre>
-<p>取值和修改：</p>
-<pre><code class="language-kotlin">println(strs[0])
-   👇      👆
-strs[1] = &quot;B&quot;
-</code></pre>
-<p>和java方式一样。</p>
-<p>kotlin中数组不支持协变，子类数组对象不能赋值给父类的数组变量。但是java数组支持协变。</p>
-<p>集合</p>
-<p>Kotlin和Java一样有三种集合类型：List、Set和Map，</p>
-<p>java:</p>
-<pre><code class="language-java">List&lt;String&gt; strList = new ArrayList&lt;&gt;();
-strList.add(&quot;a&quot;);
-strList.add(&quot;b&quot;);
-strList.add(&quot;c&quot;); // 👈 添加元素繁琐
-</code></pre>
-<p>kotlin:</p>
-<pre><code class="language-kotlin">val strList = listOf(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
-</code></pre>
-<p>kotlin创建list，类似创建数组的代码。kotlin里的list支持协变。可以把子类的list赋值给父类list变量。但是java list不支持协变。</p>
-<p>和List类似，Set同样具有协变特性。</p>
-<p>java创建map:</p>
-<pre><code class="language-java">Map&lt;String, Integer&gt; map = new HashMap&lt;&gt;();
-map.put(&quot;key1&quot;, 1);
-map.put(&quot;key2&quot;, 2);
-map.put(&quot;key3&quot;, 3);
-map.put(&quot;key4&quot;, 3);
-</code></pre>
-<p>kotlin创建map:</p>
-<pre><code class="language-kotlin">val map = mapOf(&quot;key1&quot; to 1, &quot;key2&quot; to 2, &quot;key3&quot; to 3, &quot;key4&quot; to 3)
-</code></pre>
-<p>mapOf的每一个参数表示一个键值对，to表示将键和值关联，这个叫中缀表达式。</p>
-<p>kotlin中的map除了和java一样可以使用get()根据键获取对应的值，还可以使用方括号的方式获取：</p>
-<pre><code class="language-kotlin">val value1 = map.get(&quot;key1&quot;)
-               👇
-val value2 = map[&quot;key2&quot;]
-</code></pre>
-<p>类似的，kotlin中也可以用方括号的方式改变map中的值</p>
-<pre><code class="language-kotlin">val map = mutableMapOf(&quot;key1&quot; to 1, &quot;key2&quot; to 2)
-    👇
-map.put(&quot;key1&quot;, 2)
-   👇
-map[&quot;key1&quot;] = 2  
-</code></pre>
-<p>可变集合/不可变集合</p>
-<p>mapOf()创建的map不可以修改值，mutableMapOf()创建的map才可以修改。</p>
-<p>Kotlin中的集合分为两种类型：只读和可变的。只读有两层意思：</p>
-<p>集合的size不可变；集合中的元素值不可变。</p>
-<p>有mutable前缀的函数创建的是可变的集合，没有就是不可变的集合。不过可以通过toMutable*()系列函数转换成可变的函数，不过该方法返回的是新集合，原集合还是不可变的。</p>
-<p>Sequence:</p>
-<p>kotlin的容器类型sequence,和iterable一样。</p>
-<pre><code class="language-kotlin">sequenceOf(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
-</code></pre>
-<p>使用iterable创建:</p>
-<pre><code class="language-kotlin">val list = listOf(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
-list.asSequence()
-</code></pre>
-<p>可见性修饰符</p>
-<p>kotlin有四种可见性修饰符：</p>
-<p>public:公开，可见性最大，哪里都可以引用</p>
-<p>private:私有，可见性最小，根据声明位置不同可分为类中可见和文件中可见。</p>
-<p>protected:保护，相当于private+子类可见</p>
-<p>internal:内部，仅对module内可见。</p>
-<p>相比java少了一个default（包内可见）修饰符，多了一个internal(module内可见)修饰符。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Kotlin学习笔记一-基础写法和Java的区别]]></title>
-        <id>https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-1-ji-chu-xie-fa-he-java-de-qu-bie/</id>
-        <link href="https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-1-ji-chu-xie-fa-he-java-de-qu-bie/">
-        </link>
-        <updated>2020-04-30T08:17:14.000Z</updated>
-        <content type="html"><![CDATA[<p>kotlin结尾不需要分号</p>
-<p>kotlin声明变量是需要初始化，否则会报错，除非声明称抽象的（kotlin里变量可以声明成抽象的）。因为kotlin的变量是没有默认值的。</p>
-<p>因为kotlin有空安全设计，所以不能赋值为null。对应java中的注解@NonNull，不过java里是提示警告，kotlin里会直接报错，拒绝编译。kotlin里所有的变量默认不允许为空。</p>
-<p>如果要解除非空限制，就在类型右边加个？，代表这个值可能为空。var i:String?=null</p>
-<p>加？的写法，在kotlin里称为可空类型。不过对于可空引用的调用会导致空指针的异常，编译就会报错，即使加了 i!=null 的判断。这个报错的意思就是你即使检查了非空也不能保证下面调用的时候还是非空，有可能多线程的情况下，其他线程把它改成空的。</p>
-<p>所以解决这个问题就是 . 改为 ?.</p>
-<p>i?.length</p>
-<p>这样写会对变量做一次非空确认再调用方法，做到线程安全。还有种是 !!.</p>
-<p>这样写就代表变量一定是空的，不用编译器检查，后果自己承担。</p>
-<p>关于空安全，所谓可空不可空，关注的都是使用的时候，就是这个变量在使用的时候是否可能为空</p>
-<p>kotlin变量默认是public的</p>
-<p>kotlin里属性的getter/setter的函数,和java的区别：</p>
-<p>​	getter/setter函数有了专门的关键字get/set</p>
-<p>​	getter/setter函数位于var所声明的变量下面</p>
-<p>​	setter函数参数是value</p>
-<p>​	set/get里属性值名称成了field</p>
-<p>kotlin中的类默认是public ，类的继承在kotlin是：，其实：不仅可以表示继承，还可以表示java中的implement。</p>
-<p>java中的override是注解，kotlin中的override是关键字。kotlin的override函数的可见性继承自父类的。</p>
-<p>Kotlin中的类默认是final的，所以无法继承，与java类默认权限不一致。但是可以通过加上关键字open解除final限制，就可以继承了。open没有父类到子类的遗传性，但是override是有遗传性的，可以遗传权限。如果要关闭override的遗传性，在前面加上final关键字就可以。</p>
-<p>kotlin实例化一个对象，不需要new关键字</p>
-<p>类型的判断和强转</p>
-<p>java里，需要先试用instanceof关键字判断类型再通过强转来调用</p>
-<pre><code class="language-java">void main() {
-    Activity activity = new NewActivity();
-    if (activity instanceof NewActivity) {
-        ((NewActivity) activity).action();
-    }
-}
-</code></pre>
-<p>kotlin里也有类似的，使用is关键字进行类型判断，并且因为编译器能够进行类型推断，可以帮助省略强转的写法:</p>
-<pre><code class="language-kotlin">fun main() {
-    var activity: Activity = NewActivity()
-    if (activity is NewActivity) {
-        // 👇的强转由于类型推断被省略了
-        activity.action()
-    }
-}
-</code></pre>
-<p>也可以不进行类型判断，直接进行强转调用。可用as关键字</p>
-<pre><code class="language-kotlin">fun main() {
-    var activity: Activity = NewActivity()
-    (activity as NewActivity).action()
-}
-</code></pre>
-<p>但是这样写，如果强转成一个错误的类型，程序就会抛异常。</p>
-<p>如果要进行安全的强转，可以用as?来解决：</p>
-<pre><code class="language-kotlin">fun main() {
-    var activity: Activity = NewActivity()
-    // 👇'(activity as? NewActivity)' 之后是一个可空类型的对象，所以，需要使用 '?.' 来调用
-    (activity as? NewActivity)?.action()
-}
-</code></pre>
-<p>这意思就是如果强转成功就执行之后的调用，如果强转不成功就不执行。</p>
-<p>思考这三个写法的区别</p>
-<pre><code class="language-kotlin">activity as? NewActivity
-activity as NewActivity?
-activity as? NewActivity?
-</code></pre>
-<p>解：第一种as?是代表强转可能会失败，但是不会抛出异常；</p>
-<p>第二种 NewActivity? 代表 as转换后的结果是可空的，所以需要用NewActivity?变量去接收这个结果；</p>
-<p>第三种 as? NewActivity? 重点是NewActivity?,所以和第二种写法效果是一样的。</p>
-]]></content>
-    </entry>
-    <entry>
         <title type="html"><![CDATA[Kotlin学习笔记三-相对Java更方便的]]></title>
         <id>https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-3/</id>
         <link href="https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-3/">
         </link>
-        <updated>2020-04-28T12:26:15.000Z</updated>
+        <updated>2020-04-30T12:26:15.000Z</updated>
         <content type="html"><![CDATA[<p>次构造器：</p>
 <pre><code class="language-kotlin">class User {
     var name: String
@@ -869,6 +537,338 @@ val str2 = str1
 val str3 = str1
 print(str2 === str3) // 👈 引用地址相等，输出：true
 </code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Kotlin学习笔记二-关于类和Java的不同]]></title>
+        <id>https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-er-guan-yu-lei-he-java-de-bu-tong/</id>
+        <link href="https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-er-guan-yu-lei-he-java-de-bu-tong/">
+        </link>
+        <updated>2020-04-29T08:32:38.000Z</updated>
+        <content type="html"><![CDATA[<p>kotlin构造器的写法和java不一样：</p>
+<p>java:</p>
+<pre><code class="language-java">public class User {
+    int id;
+    String name;
+      👇   👇
+    public User(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+}
+</code></pre>
+<p>kotlin:</p>
+<pre><code class="language-kotlin">class User {
+    val id: Int
+    val name: String
+         👇
+    constructor(id: Int, name: String) {
+ //👆 没有 public
+        this.id = id
+        this.name = name
+    }
+}
+</code></pre>
+<p>两点不同：java中构造器和类同名，Kotlin中则使用constructor表示；Kotlin中构造器没有public修饰，因为默认是public。</p>
+<p>kotlin初始化代码块的写法和java不一样：</p>
+<p>java:</p>
+<pre><code class="language-java">public class User {
+   👇
+    {
+        // 初始化代码块，先于下面的构造器执行
+    }
+    public User() {
+    }
+}
+</code></pre>
+<p>kotlin:</p>
+<pre><code class="language-kotlin">class User {
+    👇
+    init {
+        // 初始化代码块，先于下面的构造器执行
+    }
+    constructor() {
+    }
+}
+</code></pre>
+<p>关于final:</p>
+<p>kotlin中val和java的final类似，表示只读变量，不能修改。不同之处在于，kotlin函数参数默认是val类型，所以参数前不需要写val关键字，这样设计是为了保证参数不会被修改；而java的参数可修改，会增加出错的概率。</p>
+<p>虽然val修饰的变量不能二次赋值，但是可以通过自定义变量的getter函数，让变量每次被访问时，返回动态获取的值。</p>
+<p>eg:</p>
+<pre><code class="language-kotlin">val size: Int
+    get() { // 👈 每次获取 size 值时都会执行 items.size
+        return items.size
+    }
+</code></pre>
+<p>静态常量和静态方法：</p>
+<p>java里写常量都是用static+final。但是在kotlin里，静态变量和静态方法这两个概念被去除了。</p>
+<p>如果想在kotlin里像java一样直接通过类引用，就要用到companion object。</p>
+<pre><code class="language-kotlin">class Sample {
+    ...
+       👇
+    companion object {
+        val anotherString = &quot;Another String&quot;
+    }
+}
+</code></pre>
+<p>Sample.anotherString.length</p>
+<p>kotlin里的object，首字母小写。java中的Object在kotlin里不用了。java中的Object在Kotlin里变成了Any,和Object作用一样：所有类的基类。</p>
+<p>但是 kotlin中的object不是对象，而是关键字，可以理解为单例。</p>
+<pre><code class="language-kotlin">object Sample {
+    val name = &quot;A name&quot;
+}
+</code></pre>
+<p>Sample.name</p>
+<p>object的意思很简单：创建一个类，并且创建一个这个类的对象。在代码中如果要使用这个对象，直接使用它的类名就可以访问。</p>
+<p>所以在kotlin中创建单例很简单，class换成object就行了。</p>
+<p>这种通过object实现的单例是一个饿汉式的单例，并且实现了线程安全。</p>
+<p>object也可以继承别的类，实现接口。</p>
+<p>为什么 object 可以实现接口呢？简单来讲 object 其实是把两步合并成了一步，既有 class 关键字的功能，又实现了单例，这样就容易理解了。</p>
+<p>匿名类：</p>
+<p>java:</p>
+<pre><code class="language-java">ViewPager.SimpleOnPageChangeListener listener = new ViewPager.SimpleOnPageChangeListener() {
+    @Override // 👈
+    public void onPageSelected(int position) {
+        // override
+    }
+};
+</code></pre>
+<p>kotlin:</p>
+<pre><code class="language-kotlin">val listener = object: ViewPager.SimpleOnPageChangeListener() {
+    override fun onPageSelected(position: Int) {
+        // override
+    }
+}  
+</code></pre>
+<p>和java创建匿名类的方式很相似，只不过把new换成了object:</p>
+<p>object:修饰的都是接口或者抽象类。</p>
+<p>companion object :</p>
+<p>object修饰的对象中的变量和函数都是静态的。所以如果想让类中的一部分函数和变量成为静态就要用到companion object(伴生对象)。</p>
+<pre><code class="language-kotlin">class A {
+          👇
+    object B {
+        var c: Int = 0
+    }
+}
+</code></pre>
+<p>A.B.c</p>
+<p>也可以这样写</p>
+<pre><code class="language-kotlin">class A {
+       👇
+    companion object B {
+        var c: Int = 0
+    }
+}
+</code></pre>
+<p>companion可以理解为伴随、伴生，表示修饰的对象和外部类绑定。</p>
+<p>但是有一个小限制：一个类中最多只能有一个伴生对象，但可以有多个嵌套对象。</p>
+<p>也因为这个限制，所以调用的时候可以省掉对象名：A.c</p>
+<p>所以有companion修饰时，对象的名字也可省略掉：</p>
+<pre><code class="language-kotlin">class A {
+                // 👇 B 没了
+    companion object {
+        var c: Int = 0
+    }
+}
+</code></pre>
+<p>静态初始化：</p>
+<p>java中的静态变量和方法,kotlin都放在了companion object中。因此java中的静态初始化在kotlin中自然也是放在companion object中。</p>
+<pre><code class="language-kotlin">class Sample {
+       👇
+    companion object {
+         👇
+        init {
+            ...
+        }
+    }
+}
+</code></pre>
+<p>顶层声明（top-level property/function）:</p>
+<p>就是把属性和函数的声明不写在class里面，这个在kotlin里是允许的：</p>
+<pre><code class="language-kotlin">package com.hencoder.plus
+
+// 👇 属于 package，不在 class/object 内
+fun topLevelFuncion() {
+}
+</code></pre>
+<p>topLevelFunction()</p>
+<p>这样写的属性和函数，不属于任何class,而是直接属于package，它和静态变量、函数一样是全局的，直接用，都不需要写类名。</p>
+<p>所以对于object、companion object 、top-level：</p>
+<p>如果想写工具类的功能，直接创建文件，写top-level顶层函数。</p>
+<p>如果要继承别的类或者实现接口，就用object或者companion object。</p>
+<p>常量：</p>
+<p>java:</p>
+<pre><code class="language-java">public class Sample {
+            👇     👇
+    public static final int CONST_NUMBER = 1;
+}
+</code></pre>
+<p>kotlin:</p>
+<pre><code class="language-kotlin">class Sample {
+    companion object {
+         👇                  // 👇
+        const val CONST_NUMBER = 1
+    }
+}
+
+const val CONST_SECOND_NUMBER = 2
+</code></pre>
+<p>kotlin用const 修饰常量；kotlin的常量必须声明在对象（包括伴生对象）或者顶层中，因为常量是静态的。</p>
+<p>而且kotlin中只有基本类型和String类型可以声明成常量，而java里 static  final还可以修饰对象。但是java中可以是伪常量。</p>
+<pre><code class="language-java">public class User {
+    int id; // 👈 可修改
+    String name; // 👈 可修改
+    public User(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+}
+</code></pre>
+<pre><code class="language-java">static final User user = new User(123, &quot;Zhangsan&quot;);
+</code></pre>
+<pre><code class="language-java">user.name = &quot;Lisi&quot;;
+</code></pre>
+<p>可以通过上面的方式改变它内部的值。而kotlin的常量因为限制类型必须是基本类型，所以不存在这种问题，更符合常量的定义。</p>
+<p>数组</p>
+<p>声明一个string数组：</p>
+<p>java:</p>
+<pre><code class="language-java">String[] strs = {&quot;a&quot;, &quot;b&quot;, &quot;c&quot;};
+</code></pre>
+<p>kotlin:</p>
+<pre><code class="language-kotlin">val strs: Array&lt;String&gt; = arrayOf(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
+</code></pre>
+<p>取值和修改：</p>
+<pre><code class="language-kotlin">println(strs[0])
+   👇      👆
+strs[1] = &quot;B&quot;
+</code></pre>
+<p>和java方式一样。</p>
+<p>kotlin中数组不支持协变，子类数组对象不能赋值给父类的数组变量。但是java数组支持协变。</p>
+<p>集合</p>
+<p>Kotlin和Java一样有三种集合类型：List、Set和Map，</p>
+<p>java:</p>
+<pre><code class="language-java">List&lt;String&gt; strList = new ArrayList&lt;&gt;();
+strList.add(&quot;a&quot;);
+strList.add(&quot;b&quot;);
+strList.add(&quot;c&quot;); // 👈 添加元素繁琐
+</code></pre>
+<p>kotlin:</p>
+<pre><code class="language-kotlin">val strList = listOf(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
+</code></pre>
+<p>kotlin创建list，类似创建数组的代码。kotlin里的list支持协变。可以把子类的list赋值给父类list变量。但是java list不支持协变。</p>
+<p>和List类似，Set同样具有协变特性。</p>
+<p>java创建map:</p>
+<pre><code class="language-java">Map&lt;String, Integer&gt; map = new HashMap&lt;&gt;();
+map.put(&quot;key1&quot;, 1);
+map.put(&quot;key2&quot;, 2);
+map.put(&quot;key3&quot;, 3);
+map.put(&quot;key4&quot;, 3);
+</code></pre>
+<p>kotlin创建map:</p>
+<pre><code class="language-kotlin">val map = mapOf(&quot;key1&quot; to 1, &quot;key2&quot; to 2, &quot;key3&quot; to 3, &quot;key4&quot; to 3)
+</code></pre>
+<p>mapOf的每一个参数表示一个键值对，to表示将键和值关联，这个叫中缀表达式。</p>
+<p>kotlin中的map除了和java一样可以使用get()根据键获取对应的值，还可以使用方括号的方式获取：</p>
+<pre><code class="language-kotlin">val value1 = map.get(&quot;key1&quot;)
+               👇
+val value2 = map[&quot;key2&quot;]
+</code></pre>
+<p>类似的，kotlin中也可以用方括号的方式改变map中的值</p>
+<pre><code class="language-kotlin">val map = mutableMapOf(&quot;key1&quot; to 1, &quot;key2&quot; to 2)
+    👇
+map.put(&quot;key1&quot;, 2)
+   👇
+map[&quot;key1&quot;] = 2  
+</code></pre>
+<p>可变集合/不可变集合</p>
+<p>mapOf()创建的map不可以修改值，mutableMapOf()创建的map才可以修改。</p>
+<p>Kotlin中的集合分为两种类型：只读和可变的。只读有两层意思：</p>
+<p>集合的size不可变；集合中的元素值不可变。</p>
+<p>有mutable前缀的函数创建的是可变的集合，没有就是不可变的集合。不过可以通过toMutable*()系列函数转换成可变的函数，不过该方法返回的是新集合，原集合还是不可变的。</p>
+<p>Sequence:</p>
+<p>kotlin的容器类型sequence,和iterable一样。</p>
+<pre><code class="language-kotlin">sequenceOf(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
+</code></pre>
+<p>使用iterable创建:</p>
+<pre><code class="language-kotlin">val list = listOf(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
+list.asSequence()
+</code></pre>
+<p>可见性修饰符</p>
+<p>kotlin有四种可见性修饰符：</p>
+<p>public:公开，可见性最大，哪里都可以引用</p>
+<p>private:私有，可见性最小，根据声明位置不同可分为类中可见和文件中可见。</p>
+<p>protected:保护，相当于private+子类可见</p>
+<p>internal:内部，仅对module内可见。</p>
+<p>相比java少了一个default（包内可见）修饰符，多了一个internal(module内可见)修饰符。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Kotlin学习笔记一-基础写法和Java的区别]]></title>
+        <id>https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-1-ji-chu-xie-fa-he-java-de-qu-bie/</id>
+        <link href="https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-1-ji-chu-xie-fa-he-java-de-qu-bie/">
+        </link>
+        <updated>2020-04-28T08:17:14.000Z</updated>
+        <content type="html"><![CDATA[<p>kotlin结尾不需要分号</p>
+<p>kotlin声明变量是需要初始化，否则会报错，除非声明称抽象的（kotlin里变量可以声明成抽象的）。因为kotlin的变量是没有默认值的。</p>
+<p>因为kotlin有空安全设计，所以不能赋值为null。对应java中的注解@NonNull，不过java里是提示警告，kotlin里会直接报错，拒绝编译。kotlin里所有的变量默认不允许为空。</p>
+<p>如果要解除非空限制，就在类型右边加个？，代表这个值可能为空。var i:String?=null</p>
+<p>加？的写法，在kotlin里称为可空类型。不过对于可空引用的调用会导致空指针的异常，编译就会报错，即使加了 i!=null 的判断。这个报错的意思就是你即使检查了非空也不能保证下面调用的时候还是非空，有可能多线程的情况下，其他线程把它改成空的。</p>
+<p>所以解决这个问题就是 . 改为 ?.</p>
+<p>i?.length</p>
+<p>这样写会对变量做一次非空确认再调用方法，做到线程安全。还有种是 !!.</p>
+<p>这样写就代表变量一定是空的，不用编译器检查，后果自己承担。</p>
+<p>关于空安全，所谓可空不可空，关注的都是使用的时候，就是这个变量在使用的时候是否可能为空</p>
+<p>kotlin变量默认是public的</p>
+<p>kotlin里属性的getter/setter的函数,和java的区别：</p>
+<p>​	getter/setter函数有了专门的关键字get/set</p>
+<p>​	getter/setter函数位于var所声明的变量下面</p>
+<p>​	setter函数参数是value</p>
+<p>​	set/get里属性值名称成了field</p>
+<p>kotlin中的类默认是public ，类的继承在kotlin是：，其实：不仅可以表示继承，还可以表示java中的implement。</p>
+<p>java中的override是注解，kotlin中的override是关键字。kotlin的override函数的可见性继承自父类的。</p>
+<p>Kotlin中的类默认是final的，所以无法继承，与java类默认权限不一致。但是可以通过加上关键字open解除final限制，就可以继承了。open没有父类到子类的遗传性，但是override是有遗传性的，可以遗传权限。如果要关闭override的遗传性，在前面加上final关键字就可以。</p>
+<p>kotlin实例化一个对象，不需要new关键字</p>
+<p>类型的判断和强转</p>
+<p>java里，需要先试用instanceof关键字判断类型再通过强转来调用</p>
+<pre><code class="language-java">void main() {
+    Activity activity = new NewActivity();
+    if (activity instanceof NewActivity) {
+        ((NewActivity) activity).action();
+    }
+}
+</code></pre>
+<p>kotlin里也有类似的，使用is关键字进行类型判断，并且因为编译器能够进行类型推断，可以帮助省略强转的写法:</p>
+<pre><code class="language-kotlin">fun main() {
+    var activity: Activity = NewActivity()
+    if (activity is NewActivity) {
+        // 👇的强转由于类型推断被省略了
+        activity.action()
+    }
+}
+</code></pre>
+<p>也可以不进行类型判断，直接进行强转调用。可用as关键字</p>
+<pre><code class="language-kotlin">fun main() {
+    var activity: Activity = NewActivity()
+    (activity as NewActivity).action()
+}
+</code></pre>
+<p>但是这样写，如果强转成一个错误的类型，程序就会抛异常。</p>
+<p>如果要进行安全的强转，可以用as?来解决：</p>
+<pre><code class="language-kotlin">fun main() {
+    var activity: Activity = NewActivity()
+    // 👇'(activity as? NewActivity)' 之后是一个可空类型的对象，所以，需要使用 '?.' 来调用
+    (activity as? NewActivity)?.action()
+}
+</code></pre>
+<p>这意思就是如果强转成功就执行之后的调用，如果强转不成功就不执行。</p>
+<p>思考这三个写法的区别</p>
+<pre><code class="language-kotlin">activity as? NewActivity
+activity as NewActivity?
+activity as? NewActivity?
+</code></pre>
+<p>解：第一种as?是代表强转可能会失败，但是不会抛出异常；</p>
+<p>第二种 NewActivity? 代表 as转换后的结果是可空的，所以需要用NewActivity?变量去接收这个结果；</p>
+<p>第三种 as? NewActivity? 重点是NewActivity?,所以和第二种写法效果是一样的。</p>
 ]]></content>
     </entry>
 </feed>
