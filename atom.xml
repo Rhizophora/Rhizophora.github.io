@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://rhizophora.github.io/</id>
     <title>Hello啊，树哥</title>
-    <updated>2020-04-30T08:38:56.045Z</updated>
+    <updated>2020-04-30T10:48:45.797Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://rhizophora.github.io/"/>
     <link rel="self" href="https://rhizophora.github.io/atom.xml"/>
@@ -537,6 +537,144 @@ val str2 = str1
 val str3 = str1
 print(str2 === str3) // 👈 引用地址相等，输出：true
 </code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Kotlin学习笔记四-泛型]]></title>
+        <id>https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-si-fan-xing/</id>
+        <link href="https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-si-fan-xing/">
+        </link>
+        <updated>2020-04-30T10:47:59.000Z</updated>
+        <content type="html"><![CDATA[<p>kotlin的泛型，通常离不开两个关键字 in 和 out。</p>
+<p>in就代表输入，可以改数据，但是不能查数据，对应的就是逆变</p>
+<p>out就代表输出，可以查数据，但是不能改数据，对应的就是协变</p>
+<p>泛型的意思就是把具体的类型泛化，编码的时候用符号来指代类型，在使用的时候，再确定它的类型。</p>
+<pre><code class="language-java">TextView textView = new Button(context);
+// 👆 这是多态
+
+List&lt;Button&gt; buttons = new ArrayList&lt;Button&gt;();
+List&lt;TextView&gt; textViews = buttons;
+// 👆 多态用在这里会报错 incompatible types: List&lt;Button&gt; cannot be converted to List&lt;TextView&gt;
+</code></pre>
+<p>Button继承于TextView的，根据java多态，赋值是正确的。</p>
+<p>但是到了ListView<TextView>这里就会报错，因为java泛型本身具有不可变性，java里面认为ListView<Textview>和List<Button>类型并不一致。也就是 子类的泛型List<Button>不属于泛型List<TextView>的子类。</p>
+<p>Java 的泛型类型会在编译时发生<strong>类型擦除</strong>，为了保证类型安全，不允许这样赋值。</p>
+<p>但是在 Java 里用数组做类似的事情，是不会报错的，这是因为数组并没有在编译时擦除类型：</p>
+<pre><code class="language-java">TextView[] textViews = new TextView[10];
+</code></pre>
+<p>为了解决类似的需求，实现上面的赋值，java提供了泛型通配符  ? extends和 ? super</p>
+<p>java里是这样解决的</p>
+<pre><code class="language-java">List&lt;Button&gt; buttons = new ArrayList&lt;Button&gt;();
+      👇
+List&lt;? extends TextView&gt; textViews = buttons;
+</code></pre>
+<p>?extends 叫做上界通配符，可以使java泛型具有协变性，协变就是允许上面的赋值时合法的。</p>
+<p>在继承关系树中，子类继承自父类，可以认为父类在上，子类在下。<code>extends</code> 限制了泛型类型的父类型，所以叫上界。</p>
+<p>其中？是个通配符，表示这个List的泛型类型是个未知类型</p>
+<p>extends限制了这个未知类型的上界，也就是泛型类型必须满足这个extends的限制条件，这里和定义class的extends关键字有点不一样：</p>
+<p>它的范围不仅是所有直接和间接子类，还包括上界定义的父类本身，也就是TextView。</p>
+<p>它还有implements的意思，即这里的上界也可以是interface。</p>
+<p>所以下面这几种情况都是可以的：</p>
+<pre><code class="language-java">List&lt;? extends TextView&gt; textViews = new ArrayList&lt;TextView&gt;(); // 👈 本身
+List&lt;? extends TextView&gt; textViews = new ArrayList&lt;Button&gt;(); // 👈 直接子类
+List&lt;? extends TextView&gt; textViews = new ArrayList&lt;RadioButton&gt;(); // 👈 间接子类
+</code></pre>
+<p>一般集合类都包括了get 和add两种操作，比如java中的list,</p>
+<pre><code class="language-java">List&lt;? extends TextView&gt; textViews = new ArrayList&lt;Button&gt;();
+TextView textView = textViews.get(0); // 👈 get 可以
+textViews.add(textView);
+//             👆 add 会报错，no suitable method found for add(TextView)
+</code></pre>
+<p>因为?extends TextView 这个泛型类型是未知的，但是肯定是textview的子类，get出来能够赋值给textview是没问题的，但是add就不能确定添加的是什么类型了。</p>
+<p>List&lt;?&gt;其实就是List&lt;? extends Object&gt; 的缩写。</p>
+<p>所以用了 ？extends  通配符的List，只能够向外提供数据被消费。</p>
+<p>? super叫下界通配符，可以使java泛型具有逆变性。</p>
+<p>这个super限制了通配符的子类型，所以叫下界。</p>
+<p>通配符？表示 List的泛型类型是一个未知类型。</p>
+<p>super限制了这个未知类型的下界，也就是泛型类型必须满足这个super的限制条件。</p>
+<p>super 也一样包括下界本身，同样支持interface</p>
+<p>所以下面写法都可以：</p>
+<pre><code class="language-java">List&lt;? super Button&gt; buttons = new ArrayList&lt;Button&gt;(); // 👈 本身
+List&lt;? super Button&gt; buttons = new ArrayList&lt;TextView&gt;(); // 👈 直接父类
+List&lt;? super Button&gt; buttons = new ArrayList&lt;Object&gt;(); // 👈 间接父类
+</code></pre>
+<pre><code class="language-java">List&lt;? super Button&gt; buttons = new ArrayList&lt;TextView&gt;();
+Object object = buttons.get(0); // 👈 get 出来的是 Object 类型
+Button button = ...
+buttons.add(button); // 👈 add 操作是可以的
+</code></pre>
+<p>java泛型本身是不支持协变和逆变的。</p>
+<p>可以通过泛型通配符？extend 来支持协变，但是只能读取不能修改，也就是不能往泛型集合里添加元素，如果是删除或者清空是可以的。</p>
+<p>可以通过泛型通配符？super来支持逆变，但是只能修改不能读取，这里的不能读取就是指不能按照泛型类型读取。</p>
+<p>和java泛型一样，kotlin中的泛型本身也是不可变得。</p>
+<p>使用关键字out来支持协变，等同于java中的上界通配符 ？extend</p>
+<p>使用关键字in 来支持逆变，等同于java中的下界通配符？super</p>
+<p>换了个写法但是作用是完全一样的。</p>
+<pre><code class="language-kotlin">var textViews: List&lt;out TextView&gt;
+var textViews: List&lt;in TextView&gt;
+</code></pre>
+<p>声明处的out和in</p>
+<p>可以在声明类的时候，给泛型符号加上out,表明泛型参数T只会用来输出，在使用的时候就不用额外加out了，in也是一样的道理。</p>
+<pre><code class="language-kotlin">class Producer&lt;out T&gt; {
+    fun produce(): T {
+        ...
+    }
+}
+
+val producer: Producer&lt;TextView&gt; = Producer&lt;Button&gt;() // 👈 这里不写 out 也不会报错
+val producer: Producer&lt;out TextView&gt; = Producer&lt;Button&gt;() // 👈 out 可以但没必要
+</code></pre>
+<p>java中单个？也能作为泛型通配符使用，相当于？extends Object。</p>
+<p>kotlin中有等效写法 * ，相当于 out Any</p>
+<p>java中声明类或者接口时，可以使用extends来设置边界，将泛型类型参数限制为某个类型的子集。</p>
+<pre><code class="language-java">//                👇  T 的类型必须是 Animal 的子类型
+class Monster&lt;T extends Animal&gt;{
+}
+</code></pre>
+<p>这里并么有？</p>
+<p>而且这个边界可以设置多个，用&amp;符号连接：</p>
+<pre><code class="language-java">//                            👇  T 的类型必须同时是 Animal 和 Food 的子类型
+class Monster&lt;T extends Animal &amp; Food&gt;{ 
+}
+</code></pre>
+<p>kotlin里只是把extends换成了 ：</p>
+<pre><code class="language-kotlin">class Monster&lt;T : Animal&gt;
+</code></pre>
+<p>设置多个边界：</p>
+<pre><code class="language-kotlin">class Monster&lt;T&gt; where T : Animal, T : Food
+</code></pre>
+<p>由于java中的泛型存在类型擦除的情况，任何在运行时需要知道泛型确切类型信息的操作都没用了。</p>
+<pre><code class="language-java">&lt;T&gt; void printIfTypeMatch(Object item) {
+    if (item instanceof T) { // 👈 IDE 会提示错误，illegal generic type for instanceof
+        System.out.println(item);
+    }
+}
+</code></pre>
+<p>kotlin也一样</p>
+<pre><code class="language-kotlin">fun &lt;T&gt; printIfTypeMatch(item: Any) {
+    if (item is T) { // 👈 IDE 会提示错误，Cannot check for instance of erased type: T
+        println(item)
+    }
+}
+</code></pre>
+<p>java的解决办法通常是额外传递一个Class<T>类型的参数，然后通过isInstance方法来检查。</p>
+<pre><code class="language-java">&lt;T&gt; void check(Object item, Class&lt;T&gt; type) {
+    if (type.isInstance(item)) {
+               👆
+        System.out.println(item);
+    }
+}
+</code></pre>
+<p>kotlin中同样可以这么解决，不过还有更方便的做法：使用关键字reifield配合inline来解决：</p>
+<pre><code class="language-kotlin">inline fun &lt;reified T&gt; printIfTypeMatch(item: Any) {
+    if (item is T) { // 👈 这里就不会在提示错误了
+        println(item)
+    }
+}
+</code></pre>
+<p>关于泛型，kotlin和java的两个不同：</p>
+<p>1.java中数组是支持协变的，而kotlin中的数组Array不支持协变。因为在kotlin中数组是用Array类来表示的，这个Array类使用泛型就和集合类一样，所以不支持协变。</p>
+<p>2.java中的List接口不支持协变，而kotlin中的list接口支持协变。java的List需要使用泛型通配符来解决。在kotlin里，实际上MutableList接口才相当于java的List。Kotlin中的List接口实现了只读操作，没有写操作，所以不会有类型安全的问题，自然可以支持协变。</p>
 ]]></content>
     </entry>
     <entry>
