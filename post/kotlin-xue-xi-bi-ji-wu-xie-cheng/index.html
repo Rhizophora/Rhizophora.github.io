@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="initial-scale=1.0,user-scalable=no,minimal-ui" />
+    <title>Kotlin学习笔记五-协程 | Hello啊，树哥</title>
+<link rel='stylesheet' id='puma-css'  href='https://rhizophora.github.io//styles/main.css' type='text/css' media='screen' />
+<link rel='stylesheet' id='puma-css'  href='https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css' media='screen' />
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<script type='text/javascript' src='https://rhizophora.github.io//media/scripts/jquery.js'></script>
+<script type='text/javascript' src='https://rhizophora.github.io//media/scripts/jquery-migrate.min.js'></script>
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+         <script >hljs.initHighlightingOnLoad();</script>
+         
+</head>
+<body class="single single-post postid-3788 single-format-standard">
+	<!--加入跟随滑动的顶部-->
+	<header id="masthead" class="site-header" role="banner">
+		<div class="site-branding">
+			<h1 class="site-title">
+				<a href="https://rhizophora.github.io/" title="Hello啊，树哥">Hello啊，树哥</a>
+			</h1>
+		</div>
+
+		<a class="primary-nav-trigger" href="javascript:void(0)">
+			<span class="menu-icon"></span>
+		</a>
+		
+	</header>
+		<div class="site-navigation-wrapper">
+		<nav id="site-navigation" class="main-navigation" role="navigation">
+			<ul class="primary-nav">
+                    
+				<li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30"><a title="首页" href="/">首页</a></li>
+                
+				<li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30"><a title="归档" href="/archives">归档</a></li>
+                
+				<li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30"><a title="标签" href="/tags">标签</a></li>
+                
+				<li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30"><a title="关于" href="/post/about">关于</a></li>
+                
+	
+			</ul>
+		</nav>			
+	</div>
+	<!--跟随滑动的顶部结束-->
+	<div class="surface-content">    <main class="main-content">
+        <section class="section-body">
+                            <header class="section-header u-textAlignCenter">
+                    <h2 class="grap--h2">Kotlin学习笔记五-协程</h2>
+                    <div class="block-postMetaWrap">
+                        <time>2020-04-30</time>
+                    </div>
+                </header>
+                <div class="grap">
+					
+					<p>协程是kotlin非常特别的一部分，和java相比，它是个全新的概念。</p>
+<p>协程设计的初衷就是为了解决并发问题，让协作式多任务实现起来更加方便。</p>
+<p>协程是kotlin提供的一套线程封装的api,但并不是说协程就是为线程而生的。</p>
+<p>使用协程进行网络请求刷新ui的例子</p>
+<pre><code class="language-kotlin">launch({
+    val user = api.getUser() // 👈 网络请求（IO 线程）
+    nameTv.text = user.name  // 👈 更新 UI（主线程）
+})
+</code></pre>
+<p>launch并不是一个顶层函数，它必须在一个对象中使用。launch函数加上是现在{}中的具体逻辑，就构成了一个协程。</p>
+<p>协程的基本使用</p>
+<pre><code class="language-kotlin">// 方法一，使用 runBlocking 顶层函数
+runBlocking {
+    getImage(imageId)
+}
+
+// 方法二，使用 GlobalScope 单例对象
+//            👇 可以直接调用 launch 开启协程
+GlobalScope.launch {
+    getImage(imageId)
+}
+
+// 方法三，自行通过 CoroutineContext 创建一个 CoroutineScope 对象
+//                                    👇 需要一个类型为 CoroutineContext 的参数
+val coroutineScope = CoroutineScope(context)
+coroutineScope.launch {
+    getImage(imageId)
+}
+</code></pre>
+<p>方法一通常适用于单元测试的场景，业务开发不会用到这种方法，因为它是线程阻塞的。</p>
+<p>方法二和使用runBlocking的区别在于不会阻塞线程。但是在Android开发中同样不推荐这种用法，因为它的生命周期会和app一致，而且不能取消。</p>
+<p>方法三是比较推荐的使用方法，我们可以通过context参数去管理和控制协程的生命周期（这里的context和android里的不是一个东西，是一个更通用的概念，有一个android平台的封装来配合使用）。</p>
+<p>协程最常用的功能是开发，而并发的典型场景就是多线程。可以使用Dispatchers.IO参数把任务切到IO线程执行。</p>
+<pre><code class="language-kotlin">coroutineScope.launch(Dispatchers.IO) {
+    ...
+}
+</code></pre>
+<p>当然也可以使用Dispatchers.Main参数切换到主线程：</p>
+<pre><code class="language-kotlin">coroutineScope.launch(Dispatchers.Main) {
+    ...
+}
+</code></pre>
+<p>所以一个完整的异步请求例子是这样写的：</p>
+<pre><code class="language-kotlin">coroutineScope.launch(Dispatchers.Main) {   // 在主线程开启协程
+    val user = api.getUser() // IO 线程执行网络请求
+    nameTv.text = user.name  // 主线程更新 UI
+}
+</code></pre>
+<p>java写的话就很难受</p>
+<pre><code class="language-java">api.getUser(new Callback&lt;User&gt;() {
+    @Override
+    public void success(User user) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                nameTv.setText(user.name);
+            }
+        })
+    }
+    
+    @Override
+    public void failure(Exception e) {
+        ...
+    }
+});
+</code></pre>
+<p>协程的1到0</p>
+<p>对于回调式的写法，如果并发场景再复杂一些，代码的嵌套可能会更多，维护起来会非常麻烦。用协程就会简单太多：</p>
+<pre><code class="language-kotlin">coroutineScope.launch(Dispatchers.Main) {       // 开始协程：主线程
+    val token = api.getToken()                  // 网络请求：IO 线程
+    val user = api.getUser(token)               // 网络请求：IO 线程
+    nameTv.text = user.name                     // 更新 UI：主线程
+}
+</code></pre>
+<p>如果遇到的场景是开启多个网络请求，等待所有请求结束之后再对ui更新，利用协程可以吧两个并行请求结果合并：</p>
+<pre><code class="language-kotlin">coroutineScope.launch(Dispatchers.Main) {
+    //            👇  async 函数之后再讲
+    val avatar = async { api.getAvatar(user) }    // 获取用户头像
+    val logo = async { api.getCompanyLogo(user) } // 获取用户所在公司的 logo
+    val merged = suspendingMerge(avatar, logo)    // 合并结果
+    //                  👆
+    show(merged) // 更新 UI
+}
+</code></pre>
+<p>需要注意的是 <code>suspendingMerge</code> 并不是协程 API 中提供的方法，而是我们自定义的一个可「挂起」的结果合并方法</p>
+
+                </div>
+
+                <div class="post--keywords" itemprop="keywords">
+					          </div>
+
+
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '1e614d16da5fc018bcbc',
+    clientSecret: 'd5e5bf76bb8430a9ec5454feb2c5da70d63db4c8',
+    repo: 'Rhizophora.github.io',
+    owner: 'Rhizophora',
+    admin: ['Rhizophora'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+                      </section>
+    </main>
+</div>
+	<footer class="site-footer u-textAlignCenter">
+    	<div class="footer-branding">
+            <a href="https://rhizophora.github.io/" title="Hello啊，树哥">Hello啊，树哥</a>
+									<p class="site-description">好好赚钱玩游戏</p>
+			         </div>
+		 <hr />
+		 <div class="social-links">
+		                       
+                            
+                           
+                            
+                           
+                            	
+			<span class="social-link"><a href="https://github.com/Rhizophora" target="_blank"><i class="iconfont icon-github"></i></a></span>	
+			                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+				</div>
+        <div class="footer-copy">
+                Powered by <a href="https://github.com/Rhizophora/Rhizophora.github.io" target="_blank">Rhizophora</a>
+        </div>
+
+    </footer>
+	<div class="back-to-top u-hide" onclick="backToTop();"><i class="iconfont icon-xiangshang"></i></div>
+
+<script type='text/javascript' src='https://rhizophora.github.io//media/scripts/main.js'></script>
+</body>
+</html>
