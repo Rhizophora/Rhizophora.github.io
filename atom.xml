@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://rhizophora.github.io/</id>
     <title>Hello啊，树哥</title>
-    <updated>2020-04-30T08:35:16.676Z</updated>
+    <updated>2020-04-30T08:36:52.802Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://rhizophora.github.io/"/>
     <link rel="self" href="https://rhizophora.github.io/atom.xml"/>
@@ -11,7 +11,7 @@
     <icon>https://rhizophora.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Hello啊，树哥</rights>
     <entry>
-        <title type="html"><![CDATA[Kotlin学习笔记二-关于类和java的不同]]></title>
+        <title type="html"><![CDATA[Kotlin学习笔记二-关于类和Java的不同]]></title>
         <id>https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-er-guan-yu-lei-he-java-de-bu-tong/</id>
         <link href="https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-er-guan-yu-lei-he-java-de-bu-tong/">
         </link>
@@ -274,7 +274,7 @@ list.asSequence()
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[Kotlin学习笔记1-基础写法和Java的区别]]></title>
+        <title type="html"><![CDATA[Kotlin学习笔记一-基础写法和Java的区别]]></title>
         <id>https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-1-ji-chu-xie-fa-he-java-de-qu-bie/</id>
         <link href="https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-1-ji-chu-xie-fa-he-java-de-qu-bie/">
         </link>
@@ -343,7 +343,7 @@ activity as? NewActivity?
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[Kotlin学习笔记3-相对java更方便的]]></title>
+        <title type="html"><![CDATA[Kotlin学习笔记三-相对Java更方便的]]></title>
         <id>https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-3/</id>
         <link href="https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-3/">
         </link>
