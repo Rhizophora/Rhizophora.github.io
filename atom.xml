@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://rhizophora.github.io/</id>
     <title>Hello啊，树哥</title>
-    <updated>2020-04-30T10:49:32.692Z</updated>
+    <updated>2020-04-30T10:50:17.741Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://rhizophora.github.io/"/>
     <link rel="self" href="https://rhizophora.github.io/atom.xml"/>
@@ -544,7 +544,7 @@ print(str2 === str3) // 👈 引用地址相等，输出：true
         <id>https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-si-fan-xing/</id>
         <link href="https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-si-fan-xing/">
         </link>
-        <updated>2020-04-30T10:47:59.000Z</updated>
+        <updated>2020-04-30T11:47:59.000Z</updated>
         <content type="html"><![CDATA[<p>kotlin的泛型，通常离不开两个关键字 in 和 out。</p>
 <p>in就代表输入，可以改数据，但是不能查数据，对应的就是逆变</p>
 <p>out就代表输出，可以查数据，但是不能改数据，对应的就是协变</p>
