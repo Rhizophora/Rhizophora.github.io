@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="initial-scale=1.0,user-scalable=no,minimal-ui" />
+    <title>Kotlin学习笔记二-关于类和java的不同 | Hello啊，树哥</title>
+<link rel='stylesheet' id='puma-css'  href='https://rhizophora.github.io//styles/main.css' type='text/css' media='screen' />
+<link rel='stylesheet' id='puma-css'  href='https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css' media='screen' />
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<script type='text/javascript' src='https://rhizophora.github.io//media/scripts/jquery.js'></script>
+<script type='text/javascript' src='https://rhizophora.github.io//media/scripts/jquery-migrate.min.js'></script>
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+         <script >hljs.initHighlightingOnLoad();</script>
+         
+</head>
+<body class="single single-post postid-3788 single-format-standard">
+	<!--加入跟随滑动的顶部-->
+	<header id="masthead" class="site-header" role="banner">
+		<div class="site-branding">
+			<h1 class="site-title">
+				<a href="https://rhizophora.github.io/" title="Hello啊，树哥">Hello啊，树哥</a>
+			</h1>
+		</div>
+
+		<a class="primary-nav-trigger" href="javascript:void(0)">
+			<span class="menu-icon"></span>
+		</a>
+		
+	</header>
+		<div class="site-navigation-wrapper">
+		<nav id="site-navigation" class="main-navigation" role="navigation">
+			<ul class="primary-nav">
+                    
+				<li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30"><a title="首页" href="/">首页</a></li>
+                
+				<li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30"><a title="归档" href="/archives">归档</a></li>
+                
+				<li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30"><a title="标签" href="/tags">标签</a></li>
+                
+				<li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30"><a title="关于" href="/post/about">关于</a></li>
+                
+	
+			</ul>
+		</nav>			
+	</div>
+	<!--跟随滑动的顶部结束-->
+	<div class="surface-content">    <main class="main-content">
+        <section class="section-body">
+                            <header class="section-header u-textAlignCenter">
+                    <h2 class="grap--h2">Kotlin学习笔记二-关于类和java的不同</h2>
+                    <div class="block-postMetaWrap">
+                        <time>2020-04-30</time>
+                    </div>
+                </header>
+                <div class="grap">
+					
+					<p>kotlin构造器的写法和java不一样：</p>
+<p>java:</p>
+<pre><code class="language-java">public class User {
+    int id;
+    String name;
+      👇   👇
+    public User(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+}
+</code></pre>
+<p>kotlin:</p>
+<pre><code class="language-kotlin">class User {
+    val id: Int
+    val name: String
+         👇
+    constructor(id: Int, name: String) {
+ //👆 没有 public
+        this.id = id
+        this.name = name
+    }
+}
+</code></pre>
+<p>两点不同：java中构造器和类同名，Kotlin中则使用constructor表示；Kotlin中构造器没有public修饰，因为默认是public。</p>
+<p>kotlin初始化代码块的写法和java不一样：</p>
+<p>java:</p>
+<pre><code class="language-java">public class User {
+   👇
+    {
+        // 初始化代码块，先于下面的构造器执行
+    }
+    public User() {
+    }
+}
+</code></pre>
+<p>kotlin:</p>
+<pre><code class="language-kotlin">class User {
+    👇
+    init {
+        // 初始化代码块，先于下面的构造器执行
+    }
+    constructor() {
+    }
+}
+</code></pre>
+<p>关于final:</p>
+<p>kotlin中val和java的final类似，表示只读变量，不能修改。不同之处在于，kotlin函数参数默认是val类型，所以参数前不需要写val关键字，这样设计是为了保证参数不会被修改；而java的参数可修改，会增加出错的概率。</p>
+<p>虽然val修饰的变量不能二次赋值，但是可以通过自定义变量的getter函数，让变量每次被访问时，返回动态获取的值。</p>
+<p>eg:</p>
+<pre><code class="language-kotlin">val size: Int
+    get() { // 👈 每次获取 size 值时都会执行 items.size
+        return items.size
+    }
+</code></pre>
+<p>静态常量和静态方法：</p>
+<p>java里写常量都是用static+final。但是在kotlin里，静态变量和静态方法这两个概念被去除了。</p>
+<p>如果想在kotlin里像java一样直接通过类引用，就要用到companion object。</p>
+<pre><code class="language-kotlin">class Sample {
+    ...
+       👇
+    companion object {
+        val anotherString = &quot;Another String&quot;
+    }
+}
+</code></pre>
+<p>Sample.anotherString.length</p>
+<p>kotlin里的object，首字母小写。java中的Object在kotlin里不用了。java中的Object在Kotlin里变成了Any,和Object作用一样：所有类的基类。</p>
+<p>但是 kotlin中的object不是对象，而是关键字，可以理解为单例。</p>
+<pre><code class="language-kotlin">object Sample {
+    val name = &quot;A name&quot;
+}
+</code></pre>
+<p>Sample.name</p>
+<p>object的意思很简单：创建一个类，并且创建一个这个类的对象。在代码中如果要使用这个对象，直接使用它的类名就可以访问。</p>
+<p>所以在kotlin中创建单例很简单，class换成object就行了。</p>
+<p>这种通过object实现的单例是一个饿汉式的单例，并且实现了线程安全。</p>
+<p>object也可以继承别的类，实现接口。</p>
+<p>为什么 object 可以实现接口呢？简单来讲 object 其实是把两步合并成了一步，既有 class 关键字的功能，又实现了单例，这样就容易理解了。</p>
+<p>匿名类：</p>
+<p>java:</p>
+<pre><code class="language-java">ViewPager.SimpleOnPageChangeListener listener = new ViewPager.SimpleOnPageChangeListener() {
+    @Override // 👈
+    public void onPageSelected(int position) {
+        // override
+    }
+};
+</code></pre>
+<p>kotlin:</p>
+<pre><code class="language-kotlin">val listener = object: ViewPager.SimpleOnPageChangeListener() {
+    override fun onPageSelected(position: Int) {
+        // override
+    }
+}  
+</code></pre>
+<p>和java创建匿名类的方式很相似，只不过把new换成了object:</p>
+<p>object:修饰的都是接口或者抽象类。</p>
+<p>companion object :</p>
+<p>object修饰的对象中的变量和函数都是静态的。所以如果想让类中的一部分函数和变量成为静态就要用到companion object(伴生对象)。</p>
+<pre><code class="language-kotlin">class A {
+          👇
+    object B {
+        var c: Int = 0
+    }
+}
+</code></pre>
+<p>A.B.c</p>
+<p>也可以这样写</p>
+<pre><code class="language-kotlin">class A {
+       👇
+    companion object B {
+        var c: Int = 0
+    }
+}
+</code></pre>
+<p>companion可以理解为伴随、伴生，表示修饰的对象和外部类绑定。</p>
+<p>但是有一个小限制：一个类中最多只能有一个伴生对象，但可以有多个嵌套对象。</p>
+<p>也因为这个限制，所以调用的时候可以省掉对象名：A.c</p>
+<p>所以有companion修饰时，对象的名字也可省略掉：</p>
+<pre><code class="language-kotlin">class A {
+                // 👇 B 没了
+    companion object {
+        var c: Int = 0
+    }
+}
+</code></pre>
+<p>静态初始化：</p>
+<p>java中的静态变量和方法,kotlin都放在了companion object中。因此java中的静态初始化在kotlin中自然也是放在companion object中。</p>
+<pre><code class="language-kotlin">class Sample {
+       👇
+    companion object {
+         👇
+        init {
+            ...
+        }
+    }
+}
+</code></pre>
+<p>顶层声明（top-level property/function）:</p>
+<p>就是把属性和函数的声明不写在class里面，这个在kotlin里是允许的：</p>
+<pre><code class="language-kotlin">package com.hencoder.plus
+
+// 👇 属于 package，不在 class/object 内
+fun topLevelFuncion() {
+}
+</code></pre>
+<p>topLevelFunction()</p>
+<p>这样写的属性和函数，不属于任何class,而是直接属于package，它和静态变量、函数一样是全局的，直接用，都不需要写类名。</p>
+<p>所以对于object、companion object 、top-level：</p>
+<p>如果想写工具类的功能，直接创建文件，写top-level顶层函数。</p>
+<p>如果要继承别的类或者实现接口，就用object或者companion object。</p>
+<p>常量：</p>
+<p>java:</p>
+<pre><code class="language-java">public class Sample {
+            👇     👇
+    public static final int CONST_NUMBER = 1;
+}
+</code></pre>
+<p>kotlin:</p>
+<pre><code class="language-kotlin">class Sample {
+    companion object {
+         👇                  // 👇
+        const val CONST_NUMBER = 1
+    }
+}
+
+const val CONST_SECOND_NUMBER = 2
+</code></pre>
+<p>kotlin用const 修饰常量；kotlin的常量必须声明在对象（包括伴生对象）或者顶层中，因为常量是静态的。</p>
+<p>而且kotlin中只有基本类型和String类型可以声明成常量，而java里 static  final还可以修饰对象。但是java中可以是伪常量。</p>
+<pre><code class="language-java">public class User {
+    int id; // 👈 可修改
+    String name; // 👈 可修改
+    public User(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+}
+</code></pre>
+<pre><code class="language-java">static final User user = new User(123, &quot;Zhangsan&quot;);
+</code></pre>
+<pre><code class="language-java">user.name = &quot;Lisi&quot;;
+</code></pre>
+<p>可以通过上面的方式改变它内部的值。而kotlin的常量因为限制类型必须是基本类型，所以不存在这种问题，更符合常量的定义。</p>
+<p>数组</p>
+<p>声明一个string数组：</p>
+<p>java:</p>
+<pre><code class="language-java">String[] strs = {&quot;a&quot;, &quot;b&quot;, &quot;c&quot;};
+</code></pre>
+<p>kotlin:</p>
+<pre><code class="language-kotlin">val strs: Array&lt;String&gt; = arrayOf(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
+</code></pre>
+<p>取值和修改：</p>
+<pre><code class="language-kotlin">println(strs[0])
+   👇      👆
+strs[1] = &quot;B&quot;
+</code></pre>
+<p>和java方式一样。</p>
+<p>kotlin中数组不支持协变，子类数组对象不能赋值给父类的数组变量。但是java数组支持协变。</p>
+<p>集合</p>
+<p>Kotlin和Java一样有三种集合类型：List、Set和Map，</p>
+<p>java:</p>
+<pre><code class="language-java">List&lt;String&gt; strList = new ArrayList&lt;&gt;();
+strList.add(&quot;a&quot;);
+strList.add(&quot;b&quot;);
+strList.add(&quot;c&quot;); // 👈 添加元素繁琐
+</code></pre>
+<p>kotlin:</p>
+<pre><code class="language-kotlin">val strList = listOf(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
+</code></pre>
+<p>kotlin创建list，类似创建数组的代码。kotlin里的list支持协变。可以把子类的list赋值给父类list变量。但是java list不支持协变。</p>
+<p>和List类似，Set同样具有协变特性。</p>
+<p>java创建map:</p>
+<pre><code class="language-java">Map&lt;String, Integer&gt; map = new HashMap&lt;&gt;();
+map.put(&quot;key1&quot;, 1);
+map.put(&quot;key2&quot;, 2);
+map.put(&quot;key3&quot;, 3);
+map.put(&quot;key4&quot;, 3);
+</code></pre>
+<p>kotlin创建map:</p>
+<pre><code class="language-kotlin">val map = mapOf(&quot;key1&quot; to 1, &quot;key2&quot; to 2, &quot;key3&quot; to 3, &quot;key4&quot; to 3)
+</code></pre>
+<p>mapOf的每一个参数表示一个键值对，to表示将键和值关联，这个叫中缀表达式。</p>
+<p>kotlin中的map除了和java一样可以使用get()根据键获取对应的值，还可以使用方括号的方式获取：</p>
+<pre><code class="language-kotlin">val value1 = map.get(&quot;key1&quot;)
+               👇
+val value2 = map[&quot;key2&quot;]
+</code></pre>
+<p>类似的，kotlin中也可以用方括号的方式改变map中的值</p>
+<pre><code class="language-kotlin">val map = mutableMapOf(&quot;key1&quot; to 1, &quot;key2&quot; to 2)
+    👇
+map.put(&quot;key1&quot;, 2)
+   👇
+map[&quot;key1&quot;] = 2  
+</code></pre>
+<p>可变集合/不可变集合</p>
+<p>mapOf()创建的map不可以修改值，mutableMapOf()创建的map才可以修改。</p>
+<p>Kotlin中的集合分为两种类型：只读和可变的。只读有两层意思：</p>
+<p>集合的size不可变；集合中的元素值不可变。</p>
+<p>有mutable前缀的函数创建的是可变的集合，没有就是不可变的集合。不过可以通过toMutable*()系列函数转换成可变的函数，不过该方法返回的是新集合，原集合还是不可变的。</p>
+<p>Sequence:</p>
+<p>kotlin的容器类型sequence,和iterable一样。</p>
+<pre><code class="language-kotlin">sequenceOf(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
+</code></pre>
+<p>使用iterable创建:</p>
+<pre><code class="language-kotlin">val list = listOf(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
+list.asSequence()
+</code></pre>
+<p>可见性修饰符</p>
+<p>kotlin有四种可见性修饰符：</p>
+<p>public:公开，可见性最大，哪里都可以引用</p>
+<p>private:私有，可见性最小，根据声明位置不同可分为类中可见和文件中可见。</p>
+<p>protected:保护，相当于private+子类可见</p>
+<p>internal:内部，仅对module内可见。</p>
+<p>相比java少了一个default（包内可见）修饰符，多了一个internal(module内可见)修饰符。</p>
+
+                </div>
+
+                <div class="post--keywords" itemprop="keywords">
+					          </div>
+
+
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '1e614d16da5fc018bcbc',
+    clientSecret: 'd5e5bf76bb8430a9ec5454feb2c5da70d63db4c8',
+    repo: 'Rhizophora.github.io',
+    owner: 'Rhizophora',
+    admin: ['Rhizophora'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+                      </section>
+    </main>
+</div>
+	<footer class="site-footer u-textAlignCenter">
+    	<div class="footer-branding">
+            <a href="https://rhizophora.github.io/" title="Hello啊，树哥">Hello啊，树哥</a>
+									<p class="site-description">好好赚钱玩游戏</p>
+			         </div>
+		 <hr />
+		 <div class="social-links">
+		                       
+                            
+                           
+                            
+                           
+                            	
+			<span class="social-link"><a href="https://github.com/Rhizophora" target="_blank"><i class="iconfont icon-github"></i></a></span>	
+			                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+				</div>
+        <div class="footer-copy">
+                Powered by <a href="https://github.com/Rhizophora/Rhizophora.github.io" target="_blank">Rhizophora</a>
+        </div>
+
+    </footer>
+	<div class="back-to-top u-hide" onclick="backToTop();"><i class="iconfont icon-xiangshang"></i></div>
+
+<script type='text/javascript' src='https://rhizophora.github.io//media/scripts/main.js'></script>
+</body>
+</html>

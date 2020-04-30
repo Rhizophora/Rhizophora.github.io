@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="initial-scale=1.0,user-scalable=no,minimal-ui" />
+    <title>Kotlin学习笔记1-基础写法和Java的区别 | Hello啊，树哥</title>
+<link rel='stylesheet' id='puma-css'  href='https://rhizophora.github.io//styles/main.css' type='text/css' media='screen' />
+<link rel='stylesheet' id='puma-css'  href='https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css' media='screen' />
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<script type='text/javascript' src='https://rhizophora.github.io//media/scripts/jquery.js'></script>
+<script type='text/javascript' src='https://rhizophora.github.io//media/scripts/jquery-migrate.min.js'></script>
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+         <script >hljs.initHighlightingOnLoad();</script>
+         
+</head>
+<body class="single single-post postid-3788 single-format-standard">
+	<!--加入跟随滑动的顶部-->
+	<header id="masthead" class="site-header" role="banner">
+		<div class="site-branding">
+			<h1 class="site-title">
+				<a href="https://rhizophora.github.io/" title="Hello啊，树哥">Hello啊，树哥</a>
+			</h1>
+		</div>
+
+		<a class="primary-nav-trigger" href="javascript:void(0)">
+			<span class="menu-icon"></span>
+		</a>
+		
+	</header>
+		<div class="site-navigation-wrapper">
+		<nav id="site-navigation" class="main-navigation" role="navigation">
+			<ul class="primary-nav">
+                    
+				<li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30"><a title="首页" href="/">首页</a></li>
+                
+				<li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30"><a title="归档" href="/archives">归档</a></li>
+                
+				<li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30"><a title="标签" href="/tags">标签</a></li>
+                
+				<li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30"><a title="关于" href="/post/about">关于</a></li>
+                
+	
+			</ul>
+		</nav>			
+	</div>
+	<!--跟随滑动的顶部结束-->
+	<div class="surface-content">    <main class="main-content">
+        <section class="section-body">
+                            <header class="section-header u-textAlignCenter">
+                    <h2 class="grap--h2">Kotlin学习笔记1-基础写法和Java的区别</h2>
+                    <div class="block-postMetaWrap">
+                        <time>2020-04-30</time>
+                    </div>
+                </header>
+                <div class="grap">
+					
+					<p>kotlin结尾不需要分号</p>
+<p>kotlin声明变量是需要初始化，否则会报错，除非声明称抽象的（kotlin里变量可以声明成抽象的）。因为kotlin的变量是没有默认值的。</p>
+<p>因为kotlin有空安全设计，所以不能赋值为null。对应java中的注解@NonNull，不过java里是提示警告，kotlin里会直接报错，拒绝编译。kotlin里所有的变量默认不允许为空。</p>
+<p>如果要解除非空限制，就在类型右边加个？，代表这个值可能为空。var i:String?=null</p>
+<p>加？的写法，在kotlin里称为可空类型。不过对于可空引用的调用会导致空指针的异常，编译就会报错，即使加了 i!=null 的判断。这个报错的意思就是你即使检查了非空也不能保证下面调用的时候还是非空，有可能多线程的情况下，其他线程把它改成空的。</p>
+<p>所以解决这个问题就是 . 改为 ?.</p>
+<p>i?.length</p>
+<p>这样写会对变量做一次非空确认再调用方法，做到线程安全。还有种是 !!.</p>
+<p>这样写就代表变量一定是空的，不用编译器检查，后果自己承担。</p>
+<p>关于空安全，所谓可空不可空，关注的都是使用的时候，就是这个变量在使用的时候是否可能为空</p>
+<p>kotlin变量默认是public的</p>
+<p>kotlin里属性的getter/setter的函数,和java的区别：</p>
+<p>​	getter/setter函数有了专门的关键字get/set</p>
+<p>​	getter/setter函数位于var所声明的变量下面</p>
+<p>​	setter函数参数是value</p>
+<p>​	set/get里属性值名称成了field</p>
+<p>kotlin中的类默认是public ，类的继承在kotlin是：，其实：不仅可以表示继承，还可以表示java中的implement。</p>
+<p>java中的override是注解，kotlin中的override是关键字。kotlin的override函数的可见性继承自父类的。</p>
+<p>Kotlin中的类默认是final的，所以无法继承，与java类默认权限不一致。但是可以通过加上关键字open解除final限制，就可以继承了。open没有父类到子类的遗传性，但是override是有遗传性的，可以遗传权限。如果要关闭override的遗传性，在前面加上final关键字就可以。</p>
+<p>kotlin实例化一个对象，不需要new关键字</p>
+<p>类型的判断和强转</p>
+<p>java里，需要先试用instanceof关键字判断类型再通过强转来调用</p>
+<pre><code class="language-java">void main() {
+    Activity activity = new NewActivity();
+    if (activity instanceof NewActivity) {
+        ((NewActivity) activity).action();
+    }
+}
+</code></pre>
+<p>kotlin里也有类似的，使用is关键字进行类型判断，并且因为编译器能够进行类型推断，可以帮助省略强转的写法:</p>
+<pre><code class="language-kotlin">fun main() {
+    var activity: Activity = NewActivity()
+    if (activity is NewActivity) {
+        // 👇的强转由于类型推断被省略了
+        activity.action()
+    }
+}
+</code></pre>
+<p>也可以不进行类型判断，直接进行强转调用。可用as关键字</p>
+<pre><code class="language-kotlin">fun main() {
+    var activity: Activity = NewActivity()
+    (activity as NewActivity).action()
+}
+</code></pre>
+<p>但是这样写，如果强转成一个错误的类型，程序就会抛异常。</p>
+<p>如果要进行安全的强转，可以用as?来解决：</p>
+<pre><code class="language-kotlin">fun main() {
+    var activity: Activity = NewActivity()
+    // 👇'(activity as? NewActivity)' 之后是一个可空类型的对象，所以，需要使用 '?.' 来调用
+    (activity as? NewActivity)?.action()
+}
+</code></pre>
+<p>这意思就是如果强转成功就执行之后的调用，如果强转不成功就不执行。</p>
+<p>思考这三个写法的区别</p>
+<pre><code class="language-kotlin">activity as? NewActivity
+activity as NewActivity?
+activity as? NewActivity?
+</code></pre>
+<p>解：第一种as?是代表强转可能会失败，但是不会抛出异常；</p>
+<p>第二种 NewActivity? 代表 as转换后的结果是可空的，所以需要用NewActivity?变量去接收这个结果；</p>
+<p>第三种 as? NewActivity? 重点是NewActivity?,所以和第二种写法效果是一样的。</p>
+
+                </div>
+
+                <div class="post--keywords" itemprop="keywords">
+					          </div>
+
+
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '1e614d16da5fc018bcbc',
+    clientSecret: 'd5e5bf76bb8430a9ec5454feb2c5da70d63db4c8',
+    repo: 'Rhizophora.github.io',
+    owner: 'Rhizophora',
+    admin: ['Rhizophora'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+                      </section>
+    </main>
+</div>
+	<footer class="site-footer u-textAlignCenter">
+    	<div class="footer-branding">
+            <a href="https://rhizophora.github.io/" title="Hello啊，树哥">Hello啊，树哥</a>
+									<p class="site-description">好好赚钱玩游戏</p>
+			         </div>
+		 <hr />
+		 <div class="social-links">
+		                       
+                            
+                           
+                            
+                           
+                            	
+			<span class="social-link"><a href="https://github.com/Rhizophora" target="_blank"><i class="iconfont icon-github"></i></a></span>	
+			                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+				</div>
+        <div class="footer-copy">
+                Powered by <a href="https://github.com/Rhizophora/Rhizophora.github.io" target="_blank">Rhizophora</a>
+        </div>
+
+    </footer>
+	<div class="back-to-top u-hide" onclick="backToTop();"><i class="iconfont icon-xiangshang"></i></div>
+
+<script type='text/javascript' src='https://rhizophora.github.io//media/scripts/main.js'></script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://rhizophora.github.io/</id>
     <title>Hello啊，树哥</title>
-    <updated>2020-04-28T12:26:59.904Z</updated>
+    <updated>2020-04-30T08:35:16.676Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://rhizophora.github.io/"/>
     <link rel="self" href="https://rhizophora.github.io/atom.xml"/>
@@ -11,7 +11,339 @@
     <icon>https://rhizophora.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Hello啊，树哥</rights>
     <entry>
-        <title type="html"><![CDATA[Kotlin学习笔记3]]></title>
+        <title type="html"><![CDATA[Kotlin学习笔记二-关于类和java的不同]]></title>
+        <id>https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-er-guan-yu-lei-he-java-de-bu-tong/</id>
+        <link href="https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-er-guan-yu-lei-he-java-de-bu-tong/">
+        </link>
+        <updated>2020-04-30T08:32:38.000Z</updated>
+        <content type="html"><![CDATA[<p>kotlin构造器的写法和java不一样：</p>
+<p>java:</p>
+<pre><code class="language-java">public class User {
+    int id;
+    String name;
+      👇   👇
+    public User(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+}
+</code></pre>
+<p>kotlin:</p>
+<pre><code class="language-kotlin">class User {
+    val id: Int
+    val name: String
+         👇
+    constructor(id: Int, name: String) {
+ //👆 没有 public
+        this.id = id
+        this.name = name
+    }
+}
+</code></pre>
+<p>两点不同：java中构造器和类同名，Kotlin中则使用constructor表示；Kotlin中构造器没有public修饰，因为默认是public。</p>
+<p>kotlin初始化代码块的写法和java不一样：</p>
+<p>java:</p>
+<pre><code class="language-java">public class User {
+   👇
+    {
+        // 初始化代码块，先于下面的构造器执行
+    }
+    public User() {
+    }
+}
+</code></pre>
+<p>kotlin:</p>
+<pre><code class="language-kotlin">class User {
+    👇
+    init {
+        // 初始化代码块，先于下面的构造器执行
+    }
+    constructor() {
+    }
+}
+</code></pre>
+<p>关于final:</p>
+<p>kotlin中val和java的final类似，表示只读变量，不能修改。不同之处在于，kotlin函数参数默认是val类型，所以参数前不需要写val关键字，这样设计是为了保证参数不会被修改；而java的参数可修改，会增加出错的概率。</p>
+<p>虽然val修饰的变量不能二次赋值，但是可以通过自定义变量的getter函数，让变量每次被访问时，返回动态获取的值。</p>
+<p>eg:</p>
+<pre><code class="language-kotlin">val size: Int
+    get() { // 👈 每次获取 size 值时都会执行 items.size
+        return items.size
+    }
+</code></pre>
+<p>静态常量和静态方法：</p>
+<p>java里写常量都是用static+final。但是在kotlin里，静态变量和静态方法这两个概念被去除了。</p>
+<p>如果想在kotlin里像java一样直接通过类引用，就要用到companion object。</p>
+<pre><code class="language-kotlin">class Sample {
+    ...
+       👇
+    companion object {
+        val anotherString = &quot;Another String&quot;
+    }
+}
+</code></pre>
+<p>Sample.anotherString.length</p>
+<p>kotlin里的object，首字母小写。java中的Object在kotlin里不用了。java中的Object在Kotlin里变成了Any,和Object作用一样：所有类的基类。</p>
+<p>但是 kotlin中的object不是对象，而是关键字，可以理解为单例。</p>
+<pre><code class="language-kotlin">object Sample {
+    val name = &quot;A name&quot;
+}
+</code></pre>
+<p>Sample.name</p>
+<p>object的意思很简单：创建一个类，并且创建一个这个类的对象。在代码中如果要使用这个对象，直接使用它的类名就可以访问。</p>
+<p>所以在kotlin中创建单例很简单，class换成object就行了。</p>
+<p>这种通过object实现的单例是一个饿汉式的单例，并且实现了线程安全。</p>
+<p>object也可以继承别的类，实现接口。</p>
+<p>为什么 object 可以实现接口呢？简单来讲 object 其实是把两步合并成了一步，既有 class 关键字的功能，又实现了单例，这样就容易理解了。</p>
+<p>匿名类：</p>
+<p>java:</p>
+<pre><code class="language-java">ViewPager.SimpleOnPageChangeListener listener = new ViewPager.SimpleOnPageChangeListener() {
+    @Override // 👈
+    public void onPageSelected(int position) {
+        // override
+    }
+};
+</code></pre>
+<p>kotlin:</p>
+<pre><code class="language-kotlin">val listener = object: ViewPager.SimpleOnPageChangeListener() {
+    override fun onPageSelected(position: Int) {
+        // override
+    }
+}  
+</code></pre>
+<p>和java创建匿名类的方式很相似，只不过把new换成了object:</p>
+<p>object:修饰的都是接口或者抽象类。</p>
+<p>companion object :</p>
+<p>object修饰的对象中的变量和函数都是静态的。所以如果想让类中的一部分函数和变量成为静态就要用到companion object(伴生对象)。</p>
+<pre><code class="language-kotlin">class A {
+          👇
+    object B {
+        var c: Int = 0
+    }
+}
+</code></pre>
+<p>A.B.c</p>
+<p>也可以这样写</p>
+<pre><code class="language-kotlin">class A {
+       👇
+    companion object B {
+        var c: Int = 0
+    }
+}
+</code></pre>
+<p>companion可以理解为伴随、伴生，表示修饰的对象和外部类绑定。</p>
+<p>但是有一个小限制：一个类中最多只能有一个伴生对象，但可以有多个嵌套对象。</p>
+<p>也因为这个限制，所以调用的时候可以省掉对象名：A.c</p>
+<p>所以有companion修饰时，对象的名字也可省略掉：</p>
+<pre><code class="language-kotlin">class A {
+                // 👇 B 没了
+    companion object {
+        var c: Int = 0
+    }
+}
+</code></pre>
+<p>静态初始化：</p>
+<p>java中的静态变量和方法,kotlin都放在了companion object中。因此java中的静态初始化在kotlin中自然也是放在companion object中。</p>
+<pre><code class="language-kotlin">class Sample {
+       👇
+    companion object {
+         👇
+        init {
+            ...
+        }
+    }
+}
+</code></pre>
+<p>顶层声明（top-level property/function）:</p>
+<p>就是把属性和函数的声明不写在class里面，这个在kotlin里是允许的：</p>
+<pre><code class="language-kotlin">package com.hencoder.plus
+
+// 👇 属于 package，不在 class/object 内
+fun topLevelFuncion() {
+}
+</code></pre>
+<p>topLevelFunction()</p>
+<p>这样写的属性和函数，不属于任何class,而是直接属于package，它和静态变量、函数一样是全局的，直接用，都不需要写类名。</p>
+<p>所以对于object、companion object 、top-level：</p>
+<p>如果想写工具类的功能，直接创建文件，写top-level顶层函数。</p>
+<p>如果要继承别的类或者实现接口，就用object或者companion object。</p>
+<p>常量：</p>
+<p>java:</p>
+<pre><code class="language-java">public class Sample {
+            👇     👇
+    public static final int CONST_NUMBER = 1;
+}
+</code></pre>
+<p>kotlin:</p>
+<pre><code class="language-kotlin">class Sample {
+    companion object {
+         👇                  // 👇
+        const val CONST_NUMBER = 1
+    }
+}
+
+const val CONST_SECOND_NUMBER = 2
+</code></pre>
+<p>kotlin用const 修饰常量；kotlin的常量必须声明在对象（包括伴生对象）或者顶层中，因为常量是静态的。</p>
+<p>而且kotlin中只有基本类型和String类型可以声明成常量，而java里 static  final还可以修饰对象。但是java中可以是伪常量。</p>
+<pre><code class="language-java">public class User {
+    int id; // 👈 可修改
+    String name; // 👈 可修改
+    public User(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+}
+</code></pre>
+<pre><code class="language-java">static final User user = new User(123, &quot;Zhangsan&quot;);
+</code></pre>
+<pre><code class="language-java">user.name = &quot;Lisi&quot;;
+</code></pre>
+<p>可以通过上面的方式改变它内部的值。而kotlin的常量因为限制类型必须是基本类型，所以不存在这种问题，更符合常量的定义。</p>
+<p>数组</p>
+<p>声明一个string数组：</p>
+<p>java:</p>
+<pre><code class="language-java">String[] strs = {&quot;a&quot;, &quot;b&quot;, &quot;c&quot;};
+</code></pre>
+<p>kotlin:</p>
+<pre><code class="language-kotlin">val strs: Array&lt;String&gt; = arrayOf(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
+</code></pre>
+<p>取值和修改：</p>
+<pre><code class="language-kotlin">println(strs[0])
+   👇      👆
+strs[1] = &quot;B&quot;
+</code></pre>
+<p>和java方式一样。</p>
+<p>kotlin中数组不支持协变，子类数组对象不能赋值给父类的数组变量。但是java数组支持协变。</p>
+<p>集合</p>
+<p>Kotlin和Java一样有三种集合类型：List、Set和Map，</p>
+<p>java:</p>
+<pre><code class="language-java">List&lt;String&gt; strList = new ArrayList&lt;&gt;();
+strList.add(&quot;a&quot;);
+strList.add(&quot;b&quot;);
+strList.add(&quot;c&quot;); // 👈 添加元素繁琐
+</code></pre>
+<p>kotlin:</p>
+<pre><code class="language-kotlin">val strList = listOf(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
+</code></pre>
+<p>kotlin创建list，类似创建数组的代码。kotlin里的list支持协变。可以把子类的list赋值给父类list变量。但是java list不支持协变。</p>
+<p>和List类似，Set同样具有协变特性。</p>
+<p>java创建map:</p>
+<pre><code class="language-java">Map&lt;String, Integer&gt; map = new HashMap&lt;&gt;();
+map.put(&quot;key1&quot;, 1);
+map.put(&quot;key2&quot;, 2);
+map.put(&quot;key3&quot;, 3);
+map.put(&quot;key4&quot;, 3);
+</code></pre>
+<p>kotlin创建map:</p>
+<pre><code class="language-kotlin">val map = mapOf(&quot;key1&quot; to 1, &quot;key2&quot; to 2, &quot;key3&quot; to 3, &quot;key4&quot; to 3)
+</code></pre>
+<p>mapOf的每一个参数表示一个键值对，to表示将键和值关联，这个叫中缀表达式。</p>
+<p>kotlin中的map除了和java一样可以使用get()根据键获取对应的值，还可以使用方括号的方式获取：</p>
+<pre><code class="language-kotlin">val value1 = map.get(&quot;key1&quot;)
+               👇
+val value2 = map[&quot;key2&quot;]
+</code></pre>
+<p>类似的，kotlin中也可以用方括号的方式改变map中的值</p>
+<pre><code class="language-kotlin">val map = mutableMapOf(&quot;key1&quot; to 1, &quot;key2&quot; to 2)
+    👇
+map.put(&quot;key1&quot;, 2)
+   👇
+map[&quot;key1&quot;] = 2  
+</code></pre>
+<p>可变集合/不可变集合</p>
+<p>mapOf()创建的map不可以修改值，mutableMapOf()创建的map才可以修改。</p>
+<p>Kotlin中的集合分为两种类型：只读和可变的。只读有两层意思：</p>
+<p>集合的size不可变；集合中的元素值不可变。</p>
+<p>有mutable前缀的函数创建的是可变的集合，没有就是不可变的集合。不过可以通过toMutable*()系列函数转换成可变的函数，不过该方法返回的是新集合，原集合还是不可变的。</p>
+<p>Sequence:</p>
+<p>kotlin的容器类型sequence,和iterable一样。</p>
+<pre><code class="language-kotlin">sequenceOf(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
+</code></pre>
+<p>使用iterable创建:</p>
+<pre><code class="language-kotlin">val list = listOf(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
+list.asSequence()
+</code></pre>
+<p>可见性修饰符</p>
+<p>kotlin有四种可见性修饰符：</p>
+<p>public:公开，可见性最大，哪里都可以引用</p>
+<p>private:私有，可见性最小，根据声明位置不同可分为类中可见和文件中可见。</p>
+<p>protected:保护，相当于private+子类可见</p>
+<p>internal:内部，仅对module内可见。</p>
+<p>相比java少了一个default（包内可见）修饰符，多了一个internal(module内可见)修饰符。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Kotlin学习笔记1-基础写法和Java的区别]]></title>
+        <id>https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-1-ji-chu-xie-fa-he-java-de-qu-bie/</id>
+        <link href="https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-1-ji-chu-xie-fa-he-java-de-qu-bie/">
+        </link>
+        <updated>2020-04-30T08:17:14.000Z</updated>
+        <content type="html"><![CDATA[<p>kotlin结尾不需要分号</p>
+<p>kotlin声明变量是需要初始化，否则会报错，除非声明称抽象的（kotlin里变量可以声明成抽象的）。因为kotlin的变量是没有默认值的。</p>
+<p>因为kotlin有空安全设计，所以不能赋值为null。对应java中的注解@NonNull，不过java里是提示警告，kotlin里会直接报错，拒绝编译。kotlin里所有的变量默认不允许为空。</p>
+<p>如果要解除非空限制，就在类型右边加个？，代表这个值可能为空。var i:String?=null</p>
+<p>加？的写法，在kotlin里称为可空类型。不过对于可空引用的调用会导致空指针的异常，编译就会报错，即使加了 i!=null 的判断。这个报错的意思就是你即使检查了非空也不能保证下面调用的时候还是非空，有可能多线程的情况下，其他线程把它改成空的。</p>
+<p>所以解决这个问题就是 . 改为 ?.</p>
+<p>i?.length</p>
+<p>这样写会对变量做一次非空确认再调用方法，做到线程安全。还有种是 !!.</p>
+<p>这样写就代表变量一定是空的，不用编译器检查，后果自己承担。</p>
+<p>关于空安全，所谓可空不可空，关注的都是使用的时候，就是这个变量在使用的时候是否可能为空</p>
+<p>kotlin变量默认是public的</p>
+<p>kotlin里属性的getter/setter的函数,和java的区别：</p>
+<p>​	getter/setter函数有了专门的关键字get/set</p>
+<p>​	getter/setter函数位于var所声明的变量下面</p>
+<p>​	setter函数参数是value</p>
+<p>​	set/get里属性值名称成了field</p>
+<p>kotlin中的类默认是public ，类的继承在kotlin是：，其实：不仅可以表示继承，还可以表示java中的implement。</p>
+<p>java中的override是注解，kotlin中的override是关键字。kotlin的override函数的可见性继承自父类的。</p>
+<p>Kotlin中的类默认是final的，所以无法继承，与java类默认权限不一致。但是可以通过加上关键字open解除final限制，就可以继承了。open没有父类到子类的遗传性，但是override是有遗传性的，可以遗传权限。如果要关闭override的遗传性，在前面加上final关键字就可以。</p>
+<p>kotlin实例化一个对象，不需要new关键字</p>
+<p>类型的判断和强转</p>
+<p>java里，需要先试用instanceof关键字判断类型再通过强转来调用</p>
+<pre><code class="language-java">void main() {
+    Activity activity = new NewActivity();
+    if (activity instanceof NewActivity) {
+        ((NewActivity) activity).action();
+    }
+}
+</code></pre>
+<p>kotlin里也有类似的，使用is关键字进行类型判断，并且因为编译器能够进行类型推断，可以帮助省略强转的写法:</p>
+<pre><code class="language-kotlin">fun main() {
+    var activity: Activity = NewActivity()
+    if (activity is NewActivity) {
+        // 👇的强转由于类型推断被省略了
+        activity.action()
+    }
+}
+</code></pre>
+<p>也可以不进行类型判断，直接进行强转调用。可用as关键字</p>
+<pre><code class="language-kotlin">fun main() {
+    var activity: Activity = NewActivity()
+    (activity as NewActivity).action()
+}
+</code></pre>
+<p>但是这样写，如果强转成一个错误的类型，程序就会抛异常。</p>
+<p>如果要进行安全的强转，可以用as?来解决：</p>
+<pre><code class="language-kotlin">fun main() {
+    var activity: Activity = NewActivity()
+    // 👇'(activity as? NewActivity)' 之后是一个可空类型的对象，所以，需要使用 '?.' 来调用
+    (activity as? NewActivity)?.action()
+}
+</code></pre>
+<p>这意思就是如果强转成功就执行之后的调用，如果强转不成功就不执行。</p>
+<p>思考这三个写法的区别</p>
+<pre><code class="language-kotlin">activity as? NewActivity
+activity as NewActivity?
+activity as? NewActivity?
+</code></pre>
+<p>解：第一种as?是代表强转可能会失败，但是不会抛出异常；</p>
+<p>第二种 NewActivity? 代表 as转换后的结果是可空的，所以需要用NewActivity?变量去接收这个结果；</p>
+<p>第三种 as? NewActivity? 重点是NewActivity?,所以和第二种写法效果是一样的。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Kotlin学习笔记3-相对java更方便的]]></title>
         <id>https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-3/</id>
         <link href="https://rhizophora.github.io/post/kotlin-xue-xi-bi-ji-3/">
         </link>
@@ -84,15 +416,459 @@ class User(name: String) {
 <p>对于没有返回值的，可以理解为返回值是Unit:</p>
 <pre><code class="language-kotlin">fun sayHi(name: String) = println(&quot;Hi &quot; + name)
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Hello Word]]></title>
-        <id>https://rhizophora.github.io/post/hello-word/</id>
-        <link href="https://rhizophora.github.io/post/hello-word/">
-        </link>
-        <updated>2020-04-16T11:21:45.000Z</updated>
-        <content type="html"><![CDATA[<p>巫师三天下第一</p>
+<p>参数默认值：</p>
+<p>java中的重载在kotlin中有一种更简单的方式，就是参数默认值</p>
+<p>eg:java</p>
+<pre><code class="language-java">public void sayHi(String name) {
+    System.out.println(&quot;Hi &quot; + name);
+}
+
+public void sayHi() {
+    sayHi(&quot;world&quot;); 
+}
+</code></pre>
+<p>kotlin:</p>
+<pre><code class="language-kotlin">fun sayHi(name: String = &quot;world&quot;) = println(&quot;Hi &quot; + name)
+</code></pre>
+<p>这里的world就是参数name的默认值，当调用该参数时不传参数，就会使用该默认值。</p>
+<p>等价于上面java的重载方法。</p>
+<pre><code class="language-kotlin">sayHi(&quot;kaixue.io&quot;)
+sayHi() // 使用了默认值 &quot;world&quot;
+</code></pre>
+<p>但是参数默认值调用时也有限制的。</p>
+<pre><code class="language-kotlin">fun sayHi(name: String = &quot;world&quot;, age: Int) {
+    ...
+}
+
+sayHi(10)
+//    👆 这时想使用默认值进行调用，IDE 会报以下两个错误
+// The integer literal does not conform to the expected type String
+// No value passed for parameter 'age'
+</code></pre>
+<p>命名参数：</p>
+<pre><code class="language-kotlin">fun sayHi(name: String = &quot;world&quot;, age: Int) {
+    ...
+}
+      👇   
+sayHi(age = 21)
+</code></pre>
+<p>这才是正确写法，需要显式指定参数age的名称，这就是命名参数。kotlin中每一个函数参数都可以作为命名参数。</p>
+<pre><code class="language-kotlin">fun sayHi(name: String = &quot;world&quot;, age: Int, isStudent: Boolean = true, isFat: Boolean = true, isTall: Boolean = true) {
+    ...
+}
+</code></pre>
+<p>调用时可以这样</p>
+<pre><code class="language-kotlin">sayHi(name = &quot;wo&quot;, age = 21, isStudent = false, isFat = true, isTall = false)
+</code></pre>
+<p>与命名参数相对的一个概念被称为未知参数，也就是按位置顺序进行参数填写。</p>
+<p>当一个函数被调用时，如果混用位置参数与命名参数，那么所有的位置参数都应该放在第一个命名参数之前。</p>
+<pre><code class="language-kotlin">fun sayHi(name: String = &quot;world&quot;, age: Int) {
+    ...
+}
+
+sayHi(name = &quot;wo&quot;, 21) // 👈 IDE 会报错，Mixing named and positioned arguments is not allowed
+sayHi(&quot;wo&quot;, age = 21) // 👈 这是正确的写法
+</code></pre>
+<p>本地函数（嵌套函数）</p>
+<p>eg:</p>
+<pre><code class="language-kotlin">fun login(user: String, password: String, illegalStr: String) {
+    // 验证 user 是否为空
+    if (user.isEmpty()) {
+        throw IllegalArgumentException(illegalStr)
+    }
+    // 验证 password 是否为空
+    if (password.isEmpty()) {
+        throw IllegalArgumentException(illegalStr)
+    }
+}
+</code></pre>
+<p>检查参数这部分可以抽取为一个单独的函数，并且又不想对外暴露，可以用到嵌套函数。</p>
+<pre><code class="language-kotlin">fun login(user: String, password: String, illegalStr: String) {
+           👇 
+    fun validate(value: String, illegalStr: String) {
+      if (value.isEmpty()) {
+          throw IllegalArgumentException(illegalStr)
+      }
+    }
+   👇
+    validate(user, illegalStr)
+    validate(password, illegalStr)
+}
+</code></pre>
+<p>重复的验证逻辑就放进了嵌套函数validate中，并且login函数外的其他地方无法访问这个嵌套函数的。</p>
+<p>因为嵌套函数是可以访问它外部的所有变量或者常量，比如类中的属性、当前函数中的参数与变量等。</p>
+<p>可以改进下：</p>
+<pre><code class="language-kotlin">fun login(user: String, password: String, illegalStr: String) {
+    fun validate(value: String) {
+        if (value.isEmpty()) {
+                                              👇
+            throw IllegalArgumentException(illegalStr)
+        }
+    }
+    validate(user)
+    validate(password)
+}
+</code></pre>
+<p>字符串</p>
+<p>kotlin可以和java一样通过+拼接字符串，变量较多时，java使用的是String.format</p>
+<pre><code class="language-java">System.out.print(String.format(&quot;Hi %s&quot;, name));
+</code></pre>
+<p>kotlin更方便的写法：</p>
+<pre><code class="language-kotlin">val name = &quot;world&quot;
+//         👇 用 '$' 符号加参数的方式
+println(&quot;Hi $name&quot;)
+</code></pre>
+<p>除了变量，$后还可以跟表达式，但要用{}包起来</p>
+<pre><code class="language-kotlin">val name = &quot;world&quot;
+println(&quot;Hi ${name.length}&quot;) 
+</code></pre>
+<p>字符串模板还支持转义字符，比如\n 进行换行操作：</p>
+<pre><code class="language-kotlin">val name = &quot;world!\n&quot;
+println(&quot;Hi $name&quot;) // 👈 会多打一个空行
+</code></pre>
+<p>raw string(原生字符串)</p>
+<p>有时候不想写过多转义字符，就可以通过原生字符串实现</p>
+<p>用法就是使用一对 “”“ 将字符串括起来</p>
+<pre><code class="language-kotlin">val name = &quot;world&quot;
+val myName = &quot;kotlin&quot;
+           👇
+val text = &quot;&quot;&quot;
+      Hi $name!
+    My name is $myName.\n
+&quot;&quot;&quot;
+println(text)
+</code></pre>
+<p>注意点：</p>
+<p>\n并不会被转义</p>
+<p>最后输出的内容与写的内容完全一致，包括实际的换行</p>
+<p>$符号引用变量仍然生效</p>
+<p>输出结果：</p>
+<pre><code>     Hi world!
+    My name is kotlin.\n
+</code></pre>
+<p>对齐方式看起来不太优雅，原生字符串还可以通过trimMargin()函数去除每行前面的空格：</p>
+<pre><code class="language-kotlin">val text = &quot;&quot;&quot;
+     👇 
+      |Hi world!
+    |My name is kotlin.
+&quot;&quot;&quot;.trimMargin()
+println(text)
+</code></pre>
+<p>输出结果：</p>
+<pre><code>Hi world!
+My name is kotlin.
+</code></pre>
+<p>这里trimMargin的注意点：</p>
+<p>|符号为默认的边界前缀，前面只能有空格，否则不会生效</p>
+<p>输出时|符号以及它前面的空格都会被删除</p>
+<p>边界前缀还可以使用其他字符，比如trimMargin(&quot;/&quot;),只不过上方的代码使用的是参数默认值的调用方式。</p>
+<p>数组和集合</p>
+<p>数组和集合的操作符</p>
+<pre><code class="language-kotlin">val intArray = intArrayOf(1, 2, 3)
+val strList = listOf(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
+</code></pre>
+<p>forEach:遍历每一个元素</p>
+<pre><code class="language-kotlin">intArray.forEach { i -&gt;
+    print(i + &quot; &quot;)
+}
+// 输出：1 2 3 
+</code></pre>
+<p>filter: 对每一个元素进行过滤操作，如果lambda表达式中的条件成立则留下该元素，否则剔除，最终生成新的集合</p>
+<pre><code class="language-kotlin">// [1, 2, 3]
+      ⬇️
+//  {2, 3}
+
+//            👇 注意，这里变成了 List
+val newList: List = intArray.filter { i -&gt;
+    i != 1 // 👈 过滤掉数组中等于 1 的元素
+}
+</code></pre>
+<p>map:遍历每个元素并执行给定表达式，最终形成新的集合</p>
+<pre><code class="language-kotlin">//  [1, 2, 3]
+       ⬇️
+//  {2, 3, 4}
+
+val newList: List = intArray.map { i -&gt;
+    i + 1 // 👈 每个元素加 1
+}
+</code></pre>
+<p>flatMap: 遍历每个元素，并为每个元素创建新的集合，最终合并到一个集合里</p>
+<pre><code class="language-kotlin">//          [1, 2, 3]
+               ⬇️
+// {&quot;2&quot;, &quot;a&quot; , &quot;3&quot;, &quot;a&quot;, &quot;4&quot;, &quot;a&quot;}
+
+intArray.flatMap { i -&gt;
+    listOf(&quot;${i + 1}&quot;, &quot;a&quot;) // 👈 生成新集合
+}
+</code></pre>
+<p>除了数组和集合，kotlin里还有一种常见的数据类型:Range</p>
+<p>Range</p>
+<p>java中并没有range的概念，kotlin里的range表示区间的意思，也就是范围。区间的常见写法：</p>
+<pre><code class="language-kotlin">val range: IntRange = 0..1000 
+</code></pre>
+<p>这里的0..1000就表示从 0到1000的范围，包括1000，[0,1000]。除了IntRange还有CharRange，LongRange</p>
+<p>kotlin里没有纯的开区间的定义，不过有半开区间的定义：</p>
+<pre><code class="language-kotlin">val range: IntRange = 0 until 1000 
+</code></pre>
+<p>这个代表[0,1000),不包含1000</p>
+<p>Range这个东西，天生就是用来遍历的</p>
+<pre><code class="language-kotlin">val range = 0..1000
+//     👇 默认步长为 1，输出：0, 1, 2, 3, 4, 5, 6, 7....1000,
+for (i in range) {
+    print(&quot;$i, &quot;)
+}
+</code></pre>
+<p>这里in关键字可以与for循环结合使用，表示挨个遍历range中的值。</p>
+<p>除了使用默认的步长1，还可以通过step设置步长：</p>
+<pre><code class="language-kotlin">val range = 0..1000
+//               👇 步长为 2，输出：0, 2, 4, 6, 8, 10,....1000,
+for (i in range step 2) {
+    print(&quot;$i, &quot;)
+}
+</code></pre>
+<p>以上是递增区间，kotlin还提供了递减区间downTo，不过递减没有半开区间的用法：</p>
+<pre><code class="language-kotlin">//            👇 输出：4, 3, 2, 1, 
+for (i in 4 downTo 1) {
+    print(&quot;$i, &quot;)
+}
+</code></pre>
+<p>4 downTo 1 就表示递减的闭区间[4,1]。这里的downTo以及上面的step都叫做中缀表达式。</p>
+<p>Sequence,又叫做惰性集合操作。</p>
+<pre><code class="language-kotlin">val sequence = sequenceOf(1, 2, 3, 4)
+val result: Sequence&lt;Int&gt; = sequence
+    .map { i -&gt;
+        println(&quot;Map $i&quot;)
+        i * 2 
+    }
+    .filter { i -&gt;
+        println(&quot;Filter $i&quot;)
+        i % 3  == 0 
+    }
+👇
+println(result.first()) // 👈 只取集合的第一个元素
+</code></pre>
+<p>惰性的概念首先就是说在「👇」标注之前的代码运行时不会立即执行，它只是定义了一个执行流程，只有 <code>result</code> 被使用到的时候才会执行。</p>
+<p>当「👇」的 <code>println</code> 执行时数据处理流程是这样的：</p>
+<ul>
+<li>取出元素 1 -&gt; map 为 2 -&gt; filter 判断 2 是否能被 3 整除</li>
+<li>取出元素 2 -&gt; map 为 4 -&gt; filter 判断 4 是否能被 3 整除</li>
+<li>...</li>
+</ul>
+<p>惰性指当出现满足条件的第一个元素的时候，<code>Sequence</code> 就不会执行后面的元素遍历了，即跳过了 8 的遍历。</p>
+<p>而List是没有惰性的：声明之后立即执行。</p>
+<p>Sequence这种类似懒加载的实现有以下优点：</p>
+<p>一旦满足遍历退出的条件，就可以省略后续不必要的遍历过程。</p>
+<p>像List这种实现iterable接口的集合类，每调用一次函数就会生成一个iterable，下个函数再基于新的iterable执行，每次函数调用产生的临时iterable会导致额外的内存消耗，而Sequence在整个流程只有一个。</p>
+<p>所以，Sequence这种数据类型可以在数据量比较大或者数据量未知的时候，作为流式处理的解决方案。</p>
+<p>条件控制</p>
+<p>kotlin中对条件控制进行了许多的优化以及改进。</p>
+<p>java if/else 写法：</p>
+<pre><code class="language-java">int max;
+if (a &gt; b) {
+    max = a;
+} else {
+    max = b;
+}
+</code></pre>
+<p>kotlin中，也可以这样写，不过kotlin中if语句还可以作为一个表达式赋值给变量：</p>
+<pre><code class="language-kotlin">val max = if (a &gt; b) a else b
+</code></pre>
+<p>kotlin中弃用了三元运算符（条件？然后：否则），可以用if/else来代替它。</p>
+<p>if/else也可以加入代码块，最后一行会作为结果返回：</p>
+<pre><code class="language-kotlin">val max = if (a &gt; b) {
+    println(&quot;max:a&quot;)
+    a // 👈 返回 a
+} else {
+    println(&quot;max:b&quot;)
+    b // 👈 返回 b
+}
+</code></pre>
+<p>在java中，用switch来判断变量与一系列中的某个值是否相等；</p>
+<pre><code class="language-java">switch (x) {
+    case 1: {
+        System.out.println(&quot;1&quot;);
+        break;
+    }
+    case 2: {
+        System.out.println(&quot;2&quot;);
+        break;
+    }
+    default: {
+        System.out.println(&quot;default&quot;);
+    }
+}
+</code></pre>
+<p>在kotlin中变成了when</p>
+<pre><code class="language-kotlin">when (x) {
+   👇
+    1 -&gt; { println(&quot;1&quot;) }
+    2 -&gt; { println(&quot;2&quot;) }
+   👇
+    else -&gt; { println(&quot;else&quot;) }
+}
+</code></pre>
+<p>这里与java相比的不同点:</p>
+<p>省略了case和break,kotlin自动为每个分支加上了break的功能，防止像java写错；</p>
+<p>java默认的是default,kotlin则是else</p>
+<p>与if/else一样，when也可以作为表达式进行使用，分支中最后一行的结果作为返回值，这样操作的话就必须要有else分支，这样才能保证无论怎样都有值返回，除非已经列出了所有情况。</p>
+<pre><code class="language-kotlin">val value: Int = when (x) {
+    1 -&gt; { x + 1 }
+    2 -&gt; { x * 2 }
+    else -&gt; { x + 5 }
+}
+</code></pre>
+<p>在java中，当多种情况之下执行同一份代码时，</p>
+<pre><code class="language-kotlin">switch (x) {
+    case 1:
+    case 2: {
+        System.out.println(&quot;x == 1 or x == 2&quot;);
+        break;
+    }
+    default: {
+        System.out.println(&quot;default&quot;);
+    }
+}
+</code></pre>
+<p>kotlin中，是用，隔开</p>
+<pre><code class="language-kotlin">when (x) {
+    👇
+    1, 2 -&gt; print(&quot;x == 1 or x == 2&quot;)
+    else -&gt; print(&quot;else&quot;)
+}
+</code></pre>
+<p>使用in检测是否在一个区间或者集合中：</p>
+<pre><code class="language-kotlin">when (x) {
+   👇
+    in 1..10 -&gt; print(&quot;x 在区间 1..10 中&quot;)
+   👇
+    in listOf(1,2) -&gt; print(&quot;x 在集合中&quot;)
+   👇 // not in
+    !in 10..20 -&gt; print(&quot;x 不在区间 10..20 中&quot;)
+    else -&gt; print(&quot;不在任何区间上&quot;)
+}
+</code></pre>
+<p>或者使用is进行特定类型的检测：</p>
+<pre><code class="language-kotlin">val isString = when(x) {
+    👇
+    is String -&gt; true
+    else -&gt; false
+}
+</code></pre>
+<p>还可以省略when后面的参数，每一个分支条件都可以是一个布尔表达式</p>
+<pre><code class="language-kotlin">when {
+   👇
+    str1.contains(&quot;a&quot;) -&gt; print(&quot;字符串 str1 包含 a&quot;)
+   👇
+    str2.length == 3 -&gt; print(&quot;字符串 str2 的长度为 3&quot;)
+}
+</code></pre>
+<p>当分支的判断条件为表达式时，哪一个条件先为true就执行哪个分支的代码块</p>
+<p>for</p>
+<p>java遍历集合或者数组：</p>
+<pre><code class="language-kotlin">int[] array = {1, 2, 3, 4};
+for (int item : array) {
+    ...
+}
+</code></pre>
+<p>kotlin遍历：</p>
+<pre><code class="language-kotlin">val array = intArrayOf(1, 2, 3, 4)
+          👇
+for (item in array) {
+    ...
+}
+</code></pre>
+<p>与java的不同：</p>
+<p>在kotlin中，表示单个元素的item，不用显示声名类型</p>
+<p>kotlin使用的关键字是in,表示item是array里面的一个元素</p>
+<p>另外，kotlin的in后面的变量可以是任何实现iterable接口的对象</p>
+<p>在java另一种写for循环的方式：</p>
+<pre><code class="language-kotlin">for (int i = 0; i &lt;= 10; i++) {
+    // 遍历从 0 到 10
+}
+</code></pre>
+<p>但kotlin中么有这样的写法，是这样：</p>
+<pre><code class="language-kotlin">for (i in 0..10) {
+    println(i)
+}
+</code></pre>
+<p>try-catch</p>
+<p>kotlin捕获异常的写法和java差不多：</p>
+<pre><code class="language-kotlin">try {
+    ...
+}
+catch (e: Exception) {
+    ...
+}
+finally {
+    ...
+}
+</code></pre>
+<p>但是也有不同点:</p>
+<p>在java中，调出一个抛出异常的方法时，需要对异常进行处理，否则就会报错</p>
+<pre><code class="language-java">public class User{
+    void sayHi() throws IOException {
+    }
+    
+    void test() {
+        sayHi();
+        // 👆 IDE 报错，Unhandled exception: java.io.IOException
+    }
+}
+</code></pre>
+<p>但是在kotlin中，调用上方user类的sayHi方法不会报错</p>
+<pre><code class="language-kotlin">val user = User()
+user.sayHi() // 👈 正常调用，IDE 不会报错，但运行时会出错
+</code></pre>
+<p>因为kotlin中的异常是不会被检查的，只有在运行时如果sayHi抛出异常才会出错。</p>
+<p>kotlin中的try-catch也可以是一个表达式，允许代码块的最后一行作为返回值。</p>
+<pre><code class="language-kotlin">val a: Int? = try { parseInt(input) } catch (e: NumberFormatException) { null }
+</code></pre>
+<p>?.和?:</p>
+<p>?:是另外一个常用的复合符号，可以在判空时更加方便。</p>
+<p>调用?.在对象非空时会执行后面的调用，对象为空时就会返回null。如果这时将该表达式赋值给一个不可空的变量：</p>
+<pre><code class="language-kotlin">val str: String? = &quot;Hello&quot;
+var length: Int = str?.length
+//                👆 ，IDE 报错，Type mismatch. Required:Int. Found:Int?
+</code></pre>
+<p>因为length为不可空变量，不能让可空变量赋值给它</p>
+<p>这时就可用Elvis操作符?:</p>
+<pre><code class="language-kotlin">val str: String? = &quot;Hello&quot;
+                             👇
+val length: Int = str?.length ?: -1
+</code></pre>
+<p>这意思就是如果左边表达式str?.length结果为空，则返回右侧的值-1</p>
+<p>Elvis操作符还有另外一种常见用法：</p>
+<pre><code class="language-kotlin">fun validate(user: User) {
+    val id = user.id ?: return // 👈 验证 user.id 是否为空，为空时 return 
+}
+// 等同于
+
+fun validate(user: User) {
+    if (user.id == null) {
+        return
+    }
+    val id = user.id
+}
+</code></pre>
+<p><mark>和</mark>=</p>
+<p>java里==比较的如果是基本数据类型值，则判断值是否相等，如果比较的是String则表示引用地址是否相等，String字符串内容比较 是用的是equal();</p>
+<pre><code class="language-java">String str1 = &quot;123&quot;, str2 = &quot;123&quot;;
+System.out.println(str1.equals(str2));
+System.out.println(str1 == str2); 
+</code></pre>
+<p>kotlin也有两张相等比较方式：</p>
+<p>==：可以对基本数据类型以及String等类型进行内容比较，相当于java的equals</p>
+<p>=<mark>:对引用的内存地址进行比较，相当于java中的</mark></p>
+<p>也就是说 java中的equal，在kotlin中与之对应的是==</p>
+<pre><code class="language-kotlin">val str1 = &quot;123&quot;
+val str2 = &quot;123&quot;
+println(str1 == str2) // 👈 内容相等，输出：true
+
+val str1= &quot;字符串&quot;
+val str2 = str1
+val str3 = str1
+print(str2 === str3) // 👈 引用地址相等，输出：true
+</code></pre>
 ]]></content>
     </entry>
 </feed>
