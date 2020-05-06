@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="initial-scale=1.0,user-scalable=no,minimal-ui" />
+    <title>Kotlin学习笔记六-协程的挂起 | Hello啊，树哥</title>
+<link rel='stylesheet' id='puma-css'  href='https://rhizophora.github.io//styles/main.css' type='text/css' media='screen' />
+<link rel='stylesheet' id='puma-css'  href='https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css' media='screen' />
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<script type='text/javascript' src='https://rhizophora.github.io//media/scripts/jquery.js'></script>
+<script type='text/javascript' src='https://rhizophora.github.io//media/scripts/jquery-migrate.min.js'></script>
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+         <script >hljs.initHighlightingOnLoad();</script>
+         
+</head>
+<body class="single single-post postid-3788 single-format-standard">
+	<!--加入跟随滑动的顶部-->
+	<header id="masthead" class="site-header" role="banner">
+		<div class="site-branding">
+			<h1 class="site-title">
+				<a href="https://rhizophora.github.io/" title="Hello啊，树哥">Hello啊，树哥</a>
+			</h1>
+		</div>
+
+		<a class="primary-nav-trigger" href="javascript:void(0)">
+			<span class="menu-icon"></span>
+		</a>
+		
+	</header>
+		<div class="site-navigation-wrapper">
+		<nav id="site-navigation" class="main-navigation" role="navigation">
+			<ul class="primary-nav">
+                    
+				<li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30"><a title="首页" href="/">首页</a></li>
+                
+				<li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30"><a title="归档" href="/archives">归档</a></li>
+                
+				<li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30"><a title="标签" href="/tags">标签</a></li>
+                
+				<li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30"><a title="关于" href="/post/about">关于</a></li>
+                
+	
+			</ul>
+		</nav>			
+	</div>
+	<!--跟随滑动的顶部结束-->
+	<div class="surface-content">    <main class="main-content">
+        <section class="section-body">
+                            <header class="section-header u-textAlignCenter">
+                    <h2 class="grap--h2">Kotlin学习笔记六-协程的挂起</h2>
+                    <div class="block-postMetaWrap">
+                        <time>2020-05-06</time>
+                    </div>
+                </header>
+                <div class="grap">
+					
+					<p>大部分情况下，我们都是用launch函数来创建协程，其实还有其他两个函数也可以来创建协程：</p>
+<p>runBlocking：通常适用于单元测试的场景，而业务开发中不会用到这个函数，因为它是线程阻塞的。</p>
+<p>async：和launch相同点是都可以用来启动一个协程，返回的都是Coroutine,不同点是 async返回的Coroutine多实现了Deferred接口。</p>
+<p>Deferred的意思就是延迟，也就是结果稍后才能拿到。</p>
+<p>我们调用Deferred.await()就可以得到结果了。</p>
+<p>async的使用：</p>
+<pre><code class="language-kotlin">coroutineScope.launch(Dispatchers.Main) {
+    //                      👇  async 函数启动新的协程
+    val avatar: Deferred = async { api.getAvatar(user) }    // 获取用户头像
+    val logo: Deferred = async { api.getCompanyLogo(user) } // 获取用户所在公司的 logo
+    //            👇          👇 获取返回值
+    show(avatar.await(), logo.await())                     // 更新 UI
+}
+</code></pre>
+<p>可以看到avatar和logo的类型都可以声明为Deferred，通过await获取结果并且更新到Ui上显示。</p>
+<p>挂起的本质</p>
+<p>协程中挂起的对象其实是协程。</p>
+<p>协程其实就是launch或者async函数中闭包的代码块。</p>
+<p>launch，async或者其他函数创建的协程，在执行到某一个suspend函数的时候，这个协程会被suspend,也就是被挂起。从当前线程挂起。也就是这个协程从正在执行它的线程上脱离。</p>
+<p>这个脱离并不是协程停下来了，而是当前线程不再管这个协程干嘛去了。</p>
+<p>suspend是有暂停的意思，但我们在协程中应该理解为：当线程执行到协程的suspend函数的时候，暂时不继续执行协程代码了。</p>
+<p>那就从这两个互相脱离的协程和线程分析接下来发生的事情：</p>
+<p>线程：</p>
+<p>前面提到，挂起会让协程从正在执行它的线程上脱离，具体到代码就是：</p>
+<p>协程的代码块中，线程执行到了suspend函数这里的时候，就暂时不再执行剩余的协程代码，跳出协程的代码块。</p>
+<p>那这个线程，如果是一个后台线程，要么无事可做，被系统回收；要么继续执行别的后台任务，跟java线程池里的线程在工作结束之后是完全一样的：回收或者再利用。</p>
+<p>如果这个线程是一个主线程，那它接下来就会继续回去工作:也就是一秒钟60次的界面刷新任务。</p>
+<p>协程：</p>
+<p>线程的代码在到达suspend函数的时候被掐断，接下来协程会从这个suspend函数开始继续往下执行，不过是在指定的线程。</p>
+<p>是suspend函数指定的，之前的例子就是函数内部的withContext传入的Dispatchers.IO所指定的IO线程。</p>
+<p>Dispatchers调度器，他可以将协程限制在一个指定的线程执行，或者将它分派到一个线程池，或者让它不受限制地运行。</p>
+<p>日常用的调度器Dispatchers有三种：</p>
+<p>Dispatchers.Main:Android主线程</p>
+<p>Dispatchers.IO:针对磁盘和网络IO进行了优化，适合IO密集型的任务，比如:读写文件，操作数据库以及网络请求</p>
+<p>Dispatchers.Default:适合CPU密集型的任务，比如计算。</p>
+<p>协程它从suspend函数开始脱离启动它的线程，继续执行在Dispatchers所指定的IO线程。</p>
+<p>紧接着在suspend函数执行完成后，协程就会自动帮我们把线程再切回来。</p>
+<p>我们协程原本是运行在主线程的，当代码遇到suspend函数的时候，发生线程切换，根据Dispatchers切换到了IO线程；</p>
+<p>当这个函数执行完毕后，线程又切回来了，切回来也就是协程会帮我们再post一个runnable，让我剩下的代码继续回到主线程去执行。</p>
+<p>协程在执行到有suspend标记函数的时候，会被suspend也就是被挂起，而所谓的被挂起，就是切个线程；</p>
+<p>不过区别在于，挂起函数在执行完成后，协程会重新切回它原先的线程。</p>
+<p>更简单的说法就是：在kotlin中所谓的挂起，就是一个稍后会被自动切回来的线程调度操作。</p>
+<p>这个切回来的动作，在kotlon中叫做resume，恢复。</p>
+<p>挂起后是需要恢复的。而恢复这个功能是协程的，如果你不在协程里面调用，恢复这个功能没法实现，所以也就回答了这个问题：为什么挂起函数必须在协程或者另一个挂起函数里被调用。</p>
+<p>所以，要求 <code>suspend</code> 函数只能在协程里或者另一个 suspend 函数里被调用，还是为了要让协程能够在 <code>suspend</code> 函数切换线程之后再切回来。</p>
+<p>suspend的意义</p>
+<p><strong>它其实是一个提醒。</strong></p>
+<p>函数的创建者对函数的使用者的提醒：我是一个耗时函数，我被我的创建者用挂起的方式放在后台运行，所以请在协程里调用我。</p>
+<p>为什么 <code>suspend</code> 关键字并没有实际去操作挂起，但 Kotlin 却把它提供出来？</p>
+<p>因为它本来就不是用来操作挂起的。</p>
+<p>挂起的操作 —— 也就是切线程，依赖的是挂起函数里面的实际代码，而不是这个关键字。</p>
+<p>所以这个关键字，<strong>只是一个提醒</strong>。</p>
+<pre><code class="language-kotlin">// 👇 redundant suspend modifier
+suspend fun suspendingPrint() {
+  println(&quot;Thread: ${Thread.currentThread().name}&quot;)
+}
+</code></pre>
+<p>如果你创建一个 <code>suspend</code> 函数但它内部不包含真正的挂起逻辑，编译器会给你一个提醒：<code>redundant suspend modifier</code>，告诉你这个 <code>suspend</code> 是多余的。</p>
+<p>因为你这个函数实质上并没有发生挂起，那你这个 <code>suspend</code> 关键字只有一个效果：就是限制这个函数只能在协程里被调用，如果在非协程的代码中调用，就会编译不通过。</p>
+<p>所以，创建一个 <code>suspend</code> 函数，为了让它包含真正挂起的逻辑，要在它内部直接或间接调用 Kotlin 自带的 <code>suspend</code> 函数，你的这个 <code>suspend</code> 才是有意义的。</p>
+<p>怎么自定义suspend函数</p>
+<p>在了解了 <code>suspend</code> 关键字的来龙去脉之后，我们就可以进入下一个话题了：怎么自定义 <code>suspend</code> 函数。</p>
+<p>这个「怎么自定义」其实分为两个问题：</p>
+<ul>
+<li>什么时候需要自定义 <code>suspend</code> 函数？</li>
+<li>具体该怎么写呢？</li>
+</ul>
+<p>自定义suspend函数的时候</p>
+<p>如果你的某个函数比较耗时，也就是要等的操作，那就把它写成 <code>suspend</code> 函数。这就是原则。</p>
+<p>耗时操作一般分为两类：I/O 操作和 CPU 计算工作。比如文件的读写、网络交互、图片的模糊处理，都是耗时的，通通可以把它们写进 <code>suspend</code> 函数里。</p>
+<p>另外这个「耗时」还有一种特殊情况，就是这件事本身做起来并不慢，但它需要等待，比如 5 秒钟之后再做这个操作。这种也是 <code>suspend</code> 函数的应用场景。</p>
+<p>具体写法</p>
+<p>给函数加上 <code>suspend</code> 关键字，然后在 <code>withContext</code> 把函数的内容包住就可以了。</p>
+<p>提到用 <code>withContext</code>是因为它在挂起函数里功能最简单直接：把线程自动切走和切回。</p>
+<p>当然并不是只有 <code>withContext</code> 这一个函数来辅助我们实现自定义的 <code>suspend</code> 函数，比如还有一个挂起函数叫 <code>delay</code>，它的作用是等待一段时间后再继续往下执行代码。</p>
+<p>使用它就可以实现刚才提到的等待类型的耗时操作：</p>
+<pre><code class="language-kotlin">suspend fun suspendUntilDone() {
+  while (!done) {
+    delay(5)
+  }
+}
+</code></pre>
+
+                </div>
+
+                <div class="post--keywords" itemprop="keywords">
+					          </div>
+
+
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '1e614d16da5fc018bcbc',
+    clientSecret: 'd5e5bf76bb8430a9ec5454feb2c5da70d63db4c8',
+    repo: 'Rhizophora.github.io',
+    owner: 'Rhizophora',
+    admin: ['Rhizophora'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+                      </section>
+    </main>
+</div>
+	<footer class="site-footer u-textAlignCenter">
+    	<div class="footer-branding">
+            <a href="https://rhizophora.github.io/" title="Hello啊，树哥">Hello啊，树哥</a>
+									<p class="site-description">好好赚钱玩游戏</p>
+			         </div>
+		 <hr />
+		 <div class="social-links">
+		                       
+                            
+                           
+                            
+                           
+                            	
+			<span class="social-link"><a href="https://github.com/Rhizophora" target="_blank"><i class="iconfont icon-github"></i></a></span>	
+			                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+				</div>
+        <div class="footer-copy">
+                Powered by <a href="https://github.com/Rhizophora/Rhizophora.github.io" target="_blank">Rhizophora</a>
+        </div>
+
+    </footer>
+	<div class="back-to-top u-hide" onclick="backToTop();"><i class="iconfont icon-xiangshang"></i></div>
+
+<script type='text/javascript' src='https://rhizophora.github.io//media/scripts/main.js'></script>
+</body>
+</html>
